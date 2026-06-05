@@ -19,7 +19,13 @@ function MockConfirmPaymentContent() {
   const [paymentDetails, setPaymentDetails] = useState<any>(null)
 
   useEffect(() => {
-    if (!orderId || !paymentId) {
+    if (typeof window === 'undefined') return
+
+    const params = new URLSearchParams(window.location.search)
+    const urlOrderId = params.get('orderId')
+    const urlPaymentId = params.get('paymentId')
+
+    if (!urlOrderId || !urlPaymentId) {
       router.push('/repairs')
       return
     }
@@ -30,13 +36,13 @@ function MockConfirmPaymentContent() {
         const { data: order } = await supabase
           .from('orders')
           .select('*, order_items(*)')
-          .eq('id', orderId)
+          .eq('id', urlOrderId)
           .single()
         
         const { data: payment } = await supabase
           .from('payments')
           .select('*')
-          .eq('id', paymentId)
+          .eq('id', urlPaymentId)
           .single()
 
         setOrderDetails(order)
@@ -47,7 +53,7 @@ function MockConfirmPaymentContent() {
     }
 
     fetchDetails()
-  }, [orderId, paymentId, router])
+  }, [router])
 
   const handleSimulatePayment = async (status: 'success' | 'failed') => {
     setLoading(true)
