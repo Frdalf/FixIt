@@ -8,12 +8,18 @@ export async function updateSession(request: NextRequest) {
     },
   })
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseAnonKey || !supabaseUrl.startsWith('http')) {
     // Fallback if environment variables are not set during initial loading
     return response
+  }
+
+  // Clean up trailing slashes and /rest/v1 suffix
+  supabaseUrl = supabaseUrl.trim().replace(/\/+$/, '')
+  if (supabaseUrl.endsWith('/rest/v1')) {
+    supabaseUrl = supabaseUrl.slice(0, -8)
   }
 
   const supabase = createServerClient(
