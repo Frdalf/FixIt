@@ -230,6 +230,12 @@ create policy "Customers can view their own payments" on public.payments for sel
 create policy "Admins can view all payments" on public.payments for select using (
   exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
 );
+create policy "Customers can insert payments for their own orders" on public.payments for insert with check (
+  exists (select 1 from public.orders where orders.id = order_id and orders.pelanggan_id = auth.uid())
+);
+create policy "Customers can update payments for their own orders" on public.payments for update using (
+  exists (select 1 from public.orders where orders.id = order_id and orders.pelanggan_id = auth.uid())
+);
 
 -- Chats Policies
 create policy "Participants can view chats" on public.chats for select using (
