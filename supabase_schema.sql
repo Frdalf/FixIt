@@ -291,7 +291,11 @@ create policy "Users can update their own notifications" on public.notifications
 -- Trigger to automatically create profile on sign up
 create or replace function public.handle_new_user()
 returns trigger as $$
+declare
+  specs_json jsonb;
+  specs_arr text[];
 begin
+  -- 1. Insert into profiles
   insert into public.profiles (id, full_name, phone, role, is_active)
   values (
     new.id,
@@ -300,22 +304,9 @@ begin
     coalesce(new.raw_user_meta_data->>'role', 'pelanggan'),
     case when coalesce(new.raw_user_meta_data->>'role', 'pelanggan') = 'teknisi' then false else true end
   );
-  return new;
-end;
-$$ language plpgsql security definer;
 
-create or replace trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute procedure public.handle_new_user();
-
--- Trigger to automatically create technician profile
-create or replace function public.handle_new_teknisi_profile()
-returns trigger as $$
-declare
-  specs_json jsonb;
-  specs_arr text[];
-begin
-  if new.role = 'teknisi' then
+  -- 2. Insert into teknisi_profiles if the role is 'teknisi'
+  if coalesce(new.raw_user_meta_data->>'role', 'pelanggan') = 'teknisi' then
     specs_json := new.raw_user_meta_data->'specializations';
     if specs_json is not null then
       select array_agg(val) into specs_arr from jsonb_array_elements_text(specs_json) as val;
@@ -334,10 +325,11 @@ begin
       (new.raw_user_meta_data->>'longitude')::decimal
     );
   end if;
+
   return new;
 end;
 $$ language plpgsql security definer;
 
-create or replace trigger on_profile_created_teknisi
-  after insert on public.profiles
-  for each row execute procedure public.handle_new_teknisi_profile();
+create or replace trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
