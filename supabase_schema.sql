@@ -181,6 +181,9 @@ alter table public.notifications enable row level security;
 -- Profiles Policies
 create policy "Users can view all profiles" on public.profiles for select using (true);
 create policy "Users can update their own profile" on public.profiles for update using (auth.uid() = id);
+create policy "Admins can update all profiles" on public.profiles for update using (
+  exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+);
 
 -- Teknisi Profiles Policies
 create policy "Anyone can view technician profiles" on public.teknisi_profiles for select using (true);
