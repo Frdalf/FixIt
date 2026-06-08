@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { LayoutDashboard, ClipboardList, Users, Settings, LogOut, Laptop } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
+import { ThemeToggle } from '@/components/shared/ThemeToggle'
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -82,9 +83,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-slate-900 flex items-center justify-end px-8 bg-slate-950/20">
+        <header className="h-16 border-b border-slate-900 flex items-center justify-between px-8 bg-slate-950/20">
           <div className="text-xs text-slate-500 font-medium">
             Super Admin Active Session
+          </div>
+          <div>
+            <ThemeToggle />
           </div>
         </header>
 

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { LogOut, User, Phone, Mail, ShieldAlert } from 'lucide-react'
 import { toast } from 'sonner'
+import { ThemeToggle } from '@/components/shared/ThemeToggle'
 
 export default function PelangganProfilePage() {
   const { profile, signOut } = useAuth()
@@ -52,11 +53,22 @@ export default function PelangganProfilePage() {
           </CardContent>
         </Card>
 
+        {/* Settings Card */}
+        <Card className="border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm bg-white dark:bg-slate-900 overflow-hidden">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Tema Tampilan</span>
+              <span className="text-[10px] text-slate-500">Pilih tema terang, gelap, atau sistem</span>
+            </div>
+            <ThemeToggle />
+          </CardContent>
+        </Card>
+
         {/* Action button */}
         <Button
           onClick={handleSignOut}
           variant="outline"
-          className="w-full border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 rounded-xl py-6 flex items-center justify-center gap-2 font-bold"
+          className="w-full border-rose-200 dark:border-rose-950 text-rose-600 dark:text-rose-450 hover:bg-rose-50 dark:hover:bg-rose-950/20 hover:border-rose-300 rounded-xl py-6 flex items-center justify-center gap-2 font-bold"
         >
           <LogOut className="h-4.5 w-4.5" />
           Keluar dari Akun
