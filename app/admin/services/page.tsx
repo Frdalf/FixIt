@@ -172,15 +172,15 @@ export default function AdminServicesPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold font-heading text-slate-100">Kelola Layanan</h1>
-          <p className="text-slate-400 text-sm mt-1 font-medium">
+          <h1 className="text-3xl font-extrabold font-heading text-slate-800 dark:text-slate-100">Kelola Layanan</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 font-medium">
             Atur katalog layanan, rentang harga, estimasi waktu, dan status aktif
           </p>
         </div>
       </div>
 
       {/* Category Tabs */}
-      <div className="flex border-b border-slate-900">
+      <div className="flex border-b border-slate-200 dark:border-slate-900">
         {['hardware', 'software', 'cleaning', 'estetika'].map((catKey) => (
           <button
             key={catKey}
@@ -189,7 +189,7 @@ export default function AdminServicesPage() {
               'flex-1 sm:flex-initial text-center px-6 pb-3 text-xs font-bold border-b-2 uppercase tracking-wider transition-all',
               activeCategory === catKey
                 ? 'border-red-500 text-red-500 font-extrabold'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
             )}
           >
             {catKey === 'estetika' ? 'Estetika & Proteksi' : catKey}
@@ -200,8 +200,8 @@ export default function AdminServicesPage() {
       {/* Services List */}
       <div className="grid gap-4">
         {filteredServices.length === 0 ? (
-          <div className="text-center py-16 bg-slate-950 border border-slate-900 rounded-2xl p-6 text-slate-500 space-y-3">
-            <Wrench className="h-8 w-8 text-slate-700 mx-auto" />
+          <div className="text-center py-16 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-900 rounded-2xl p-6 text-slate-500 space-y-3">
+            <Wrench className="h-8 w-8 text-slate-450 dark:text-slate-700 mx-auto" />
             <div className="text-sm font-medium">Belum ada layanan aktif untuk kategori ini</div>
           </div>
         ) : (
@@ -209,29 +209,29 @@ export default function AdminServicesPage() {
             <Card
               key={svc.id}
               className={cn(
-                'border-slate-900 bg-slate-950 text-white rounded-2xl shadow-md overflow-hidden transition-all',
-                !svc.is_active ? 'opacity-60 border-slate-900/50' : ''
+                'border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-800 dark:text-white rounded-2xl shadow-md overflow-hidden transition-all',
+                !svc.is_active ? 'opacity-60 border-slate-200/50 dark:border-slate-900/50' : ''
               )}
             >
               <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-slate-150 font-heading text-sm sm:text-base">
+                    <h3 className="font-bold text-slate-800 dark:text-slate-150 font-heading text-sm sm:text-base">
                       {svc.name}
                     </h3>
                     {!svc.is_active && (
-                      <Badge className="bg-slate-900 text-slate-500 border-slate-800 text-[8px] font-bold uppercase rounded-full">
+                      <Badge className="bg-slate-100 dark:bg-slate-900 text-slate-500 dark:text-slate-500 border-slate-200 dark:border-slate-800 text-[8px] font-bold uppercase rounded-full">
                         Nonaktif
                       </Badge>
                     )}
                   </div>
                   {svc.description && (
-                    <p className="text-xs text-slate-400 leading-relaxed max-w-xl">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-xl">
                       {svc.description}
                     </p>
                   )}
                   {svc.duration_est && (
-                    <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-semibold pt-1">
+                    <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-450 font-semibold pt-1">
                       <Clock className="h-3.5 w-3.5" />
                       Estimasi: {svc.duration_est}
                     </div>
@@ -240,7 +240,7 @@ export default function AdminServicesPage() {
 
                 <div className="flex items-center justify-between sm:justify-end gap-6 shrink-0 pt-2 sm:pt-0">
                   <div className="text-right">
-                    <div className="text-[10px] text-slate-500 font-bold uppercase">Rentang Harga</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-450 font-bold uppercase">Rentang Harga</div>
                     <div className="text-xs sm:text-sm font-bold text-red-500 font-heading mt-0.5">
                       {formatPrice(svc.price_min)} - {formatPrice(svc.price_max)}
                     </div>
@@ -250,12 +250,12 @@ export default function AdminServicesPage() {
                     {/* Toggle Active status */}
                     <button
                       onClick={() => handleToggleActive(svc.id, svc.is_active)}
-                      className="text-slate-400 hover:text-slate-100 transition-colors p-1.5 cursor-pointer"
+                      className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors p-1.5 cursor-pointer"
                     >
                       {svc.is_active ? (
                         <ToggleRight className="h-7 w-7 text-emerald-500 fill-emerald-950/20" />
                       ) : (
-                        <ToggleLeft className="h-7 w-7 text-slate-650" />
+                        <ToggleLeft className="h-7 w-7 text-slate-400 dark:text-slate-600" />
                       )}
                     </button>
 
@@ -263,7 +263,7 @@ export default function AdminServicesPage() {
                     <Button
                       variant="ghost"
                       onClick={() => openEditModal(svc)}
-                      className="border border-slate-900 bg-slate-900/30 hover:bg-slate-900 hover:text-slate-100 text-slate-400 rounded-xl p-3 h-auto"
+                      className="border border-slate-200 dark:border-slate-900 bg-slate-50 dark:bg-slate-900/30 hover:bg-slate-100 dark:hover:bg-slate-900 hover:text-slate-800 dark:hover:text-slate-100 text-slate-500 dark:text-slate-400 rounded-xl p-3 h-auto"
                     >
                       <Edit2 className="h-4 w-4" />
                     </Button>
@@ -277,76 +277,76 @@ export default function AdminServicesPage() {
 
       {/* Edit Service Dialog Modal */}
       {editingService && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 text-white rounded-2xl w-full max-w-md p-6 space-y-4 border border-slate-800 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <h3 className="font-bold text-slate-100 text-lg font-heading">Edit Detail Layanan</h3>
+        <div className="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl w-full max-w-md p-6 space-y-4 border border-slate-200 dark:border-slate-800 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg font-heading">Edit Detail Layanan</h3>
             
             <form onSubmit={handleSaveEdit} className="space-y-4 text-xs sm:text-sm">
               <div className="space-y-2">
-                <Label htmlFor="editName" className="text-slate-400 text-xs">Nama Layanan</Label>
+                <Label htmlFor="editName" className="text-slate-500 dark:text-slate-400 text-xs">Nama Layanan</Label>
                 <Input
                   id="editName"
                   value={editForm.name}
                   onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
                   required
-                  className="rounded-xl border-slate-800 bg-slate-950 text-white"
+                  className="rounded-xl border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="editDesc" className="text-slate-400 text-xs">Deskripsi</Label>
+                <Label htmlFor="editDesc" className="text-slate-500 dark:text-slate-400 text-xs">Deskripsi</Label>
                 <textarea
                   id="editDesc"
                   rows={2}
                   value={editForm.description}
                   onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
-                  className="w-full text-xs sm:text-sm border border-slate-800 rounded-xl p-3 focus:outline-none bg-slate-950 text-white resize-none"
+                  className="w-full text-xs sm:text-sm border border-slate-200 dark:border-slate-850 rounded-xl p-3 focus:outline-none bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white resize-none"
                   placeholder="Deskripsi layanan..."
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="editMin" className="text-slate-400 text-xs">Harga Minimum (Rp)</Label>
+                  <Label htmlFor="editMin" className="text-slate-500 dark:text-slate-400 text-xs">Harga Minimum (Rp)</Label>
                   <Input
                     id="editMin"
                     type="number"
                     value={editForm.price_min}
                     onChange={(e) => setEditForm({ ...editForm, price_min: Number(e.target.value) })}
                     required
-                    className="rounded-xl border-slate-800 bg-slate-950 text-white"
+                    className="rounded-xl border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="editMax" className="text-slate-400 text-xs">Harga Maksimum (Rp)</Label>
+                  <Label htmlFor="editMax" className="text-slate-500 dark:text-slate-400 text-xs">Harga Maksimum (Rp)</Label>
                   <Input
                     id="editMax"
                     type="number"
                     value={editForm.price_max}
                     onChange={(e) => setEditForm({ ...editForm, price_max: Number(e.target.value) })}
                     required
-                    className="rounded-xl border-slate-800 bg-slate-950 text-white"
+                    className="rounded-xl border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="editDuration" className="text-slate-400 text-xs">Estimasi Durasi Pengerjaan</Label>
+                <Label htmlFor="editDuration" className="text-slate-500 dark:text-slate-400 text-xs">Estimasi Durasi Pengerjaan</Label>
                 <Input
                   id="editDuration"
                   value={editForm.duration_est}
                   onChange={(e) => setEditForm({ ...editForm, duration_est: e.target.value })}
                   placeholder="Contoh: 30 - 45 Menit"
-                  className="rounded-xl border-slate-800 bg-slate-950 text-white"
+                  className="rounded-xl border-slate-200 dark:border-slate-850 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white"
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-4 border-t border-slate-800 mt-2">
+              <div className="flex items-center gap-2 pt-4 border-t border-slate-200 dark:border-slate-800 mt-2">
                 <Button
                   type="button"
                   variant="ghost"
                   onClick={() => setEditingService(null)}
-                  className="w-1/2 rounded-xl text-slate-400 hover:text-slate-200"
+                  className="w-1/2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                 >
                   Batal
                 </Button>

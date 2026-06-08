@@ -114,15 +114,15 @@ export default function AdminMapMonitorPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-extrabold font-heading text-slate-100">Peta Monitor Teknisi</h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <h1 className="text-3xl font-extrabold font-heading text-slate-800 dark:text-slate-100">Peta Monitor Teknisi</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
           Pantau posisi koordinat terakhir dan status penugasan mitra teknisi di lapangan secara real-time
         </p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Map visual */}
-        <div className="lg:col-span-2 h-[450px] rounded-2xl overflow-hidden border border-slate-900 shadow-md">
+        <div className="lg:col-span-2 h-[450px] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-900 shadow-md">
           <MapContainer
             center={[-6.2088, 106.8456]}
             zoom={12}
@@ -142,13 +142,13 @@ export default function AdminMapMonitorPage() {
                 ]}
               >
                 <Popup>
-                  <div className="text-xs space-y-1 bg-white p-1 rounded">
-                    <div className="font-bold text-slate-800">{tech.full_name}</div>
-                    <div className="text-[9px] text-slate-500 capitalize">
+                  <div className="text-xs space-y-1 bg-white dark:bg-slate-900 p-1 rounded text-slate-900 dark:text-slate-100">
+                    <div className="font-bold text-slate-800 dark:text-slate-150">{tech.full_name}</div>
+                    <div className="text-[9px] text-slate-500 dark:text-slate-400 capitalize">
                       Spesialisasi: {tech.teknisi_profiles.specializations.join(', ')}
                     </div>
                     <div className="flex items-center gap-1.5 pt-1">
-                      <Badge className={cn('text-[8px] px-1.5 font-bold', tech.teknisi_profiles.status === 'tersedia' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800')}>
+                      <Badge className={cn('text-[8px] px-1.5 font-bold', tech.teknisi_profiles.status === 'tersedia' ? 'bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-400')}>
                         {tech.teknisi_profiles.status}
                       </Badge>
                       <span className="text-[10px] text-amber-500 font-bold flex items-center">
@@ -164,20 +164,20 @@ export default function AdminMapMonitorPage() {
 
         {/* Legend / Status List */}
         <div className="space-y-4">
-          <h2 className="text-sm font-bold text-slate-350 uppercase tracking-wider">Mitra di Lapangan</h2>
+          <h2 className="text-sm font-bold text-slate-600 dark:text-slate-450 uppercase tracking-wider">Mitra di Lapangan</h2>
           
           <div className="space-y-3">
             {technicians.map((tech) => {
               const isAvailable = tech.teknisi_profiles.status === 'tersedia'
               return (
-                <Card key={tech.id} className="border-slate-900 bg-slate-950 text-white rounded-xl shadow-sm">
+                <Card key={tech.id} className="border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-850 dark:text-white rounded-xl shadow-sm">
                   <CardContent className="p-4 flex items-center justify-between gap-4 text-xs">
                     <div className="space-y-1">
-                      <h3 className="font-bold text-slate-200 font-heading">{tech.full_name}</h3>
-                      <div className="text-[10px] text-slate-500 capitalize">
+                      <h3 className="font-bold text-slate-800 dark:text-slate-200 font-heading">{tech.full_name}</h3>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 capitalize">
                         Spesialisasi: {tech.teknisi_profiles.specializations.join(', ')}
                       </div>
-                      <div className="text-[9.5px] text-slate-400 font-mono font-medium">
+                      <div className="text-[9.5px] text-slate-600 dark:text-slate-400 font-mono font-medium">
                         Lat: {Number(tech.teknisi_profiles.latitude).toFixed(4)}, Lng: {Number(tech.teknisi_profiles.longitude).toFixed(4)}
                       </div>
                     </div>

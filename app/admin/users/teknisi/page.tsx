@@ -118,16 +118,16 @@ export default function AdminTeknisiManagementPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-extrabold font-heading text-slate-100">Verifikasi & Kelola Teknisi</h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <h1 className="text-3xl font-extrabold font-heading text-slate-800 dark:text-slate-100">Verifikasi & Kelola Teknisi</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
           Verifikasi berkas kemitraan teknisi baru dan kendalikan status akses login
         </p>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
         {techs.length === 0 ? (
-          <div className="text-center py-16 bg-slate-950 border border-slate-900 rounded-2xl p-6 text-slate-500 col-span-2 space-y-3">
-            <Users className="h-8 w-8 text-slate-700 mx-auto" />
+          <div className="text-center py-16 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-900 rounded-2xl p-6 text-slate-500 col-span-2 space-y-3">
+            <Users className="h-8 w-8 text-slate-450 dark:text-slate-700 mx-auto" />
             <div className="text-sm font-medium">Belum ada mitra teknisi terdaftar</div>
           </div>
         ) : (
@@ -139,12 +139,12 @@ export default function AdminTeknisiManagementPage() {
               <Card
                 key={tech.id}
                 className={cn(
-                  'border-slate-900 bg-slate-950 text-white rounded-2xl shadow-md overflow-hidden relative transition-all',
-                  !isActive ? 'border-amber-900/40 bg-slate-950/80' : ''
+                  'border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-800 dark:text-white rounded-2xl shadow-md overflow-hidden relative transition-all',
+                  !isActive ? 'border-amber-200 dark:border-amber-900/40 bg-white/80 dark:bg-slate-950/80' : ''
                 )}
               >
                 {!isActive && (
-                  <div className="absolute top-3 right-3 bg-amber-950 text-amber-500 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-amber-900">
+                  <div className="absolute top-3 right-3 bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-500 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border border-amber-200 dark:border-amber-900">
                     Menunggu Verifikasi
                   </div>
                 )}
@@ -152,20 +152,20 @@ export default function AdminTeknisiManagementPage() {
                 <CardContent className="p-6 space-y-5">
                   {/* Avatar + Profile */}
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-full bg-slate-900 border border-slate-800 text-slate-200 font-extrabold text-sm flex items-center justify-center shadow-sm shrink-0">
+                    <div className="h-12 w-12 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 font-extrabold text-sm flex items-center justify-center shadow-sm shrink-0">
                       {tech.full_name.slice(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-100 font-heading text-sm sm:text-base">
+                      <h3 className="font-bold text-slate-800 dark:text-slate-100 font-heading text-sm sm:text-base">
                         {tech.full_name}
                       </h3>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-500 font-semibold pt-0.5">
+                      <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-450 font-semibold pt-0.5">
                         <span className="flex items-center gap-0.5 text-amber-500">
                           <Star className="h-3.5 w-3.5 fill-amber-500 stroke-amber-500" />
                           {tech.teknisi_profiles?.rating_avg || '0'}
                         </span>
                         <span>•</span>
-                        <span className="flex items-center gap-0.5 text-slate-400">
+                        <span className="flex items-center gap-0.5 text-slate-500 dark:text-slate-400">
                           <Award className="h-3.5 w-3.5" />
                           {tech.teknisi_profiles?.total_jobs || '0'} Servis
                         </span>
@@ -174,19 +174,19 @@ export default function AdminTeknisiManagementPage() {
                   </div>
 
                   {/* Tech specs and contact */}
-                  <div className="space-y-3.5 border-t border-slate-900 pt-4 text-xs">
-                    <div className="flex items-center gap-2.5 text-slate-400">
-                      <Phone className="h-4 w-4 text-slate-550 shrink-0" />
+                  <div className="space-y-3.5 border-t border-slate-200 dark:border-slate-900 pt-4 text-xs">
+                    <div className="flex items-center gap-2.5 text-slate-600 dark:text-slate-400">
+                      <Phone className="h-4 w-4 text-slate-400 dark:text-slate-550 shrink-0" />
                       <span>{tech.phone || 'Nomor WhatsApp belum diatur'}</span>
                     </div>
 
                     <div className="space-y-1.5 pt-1">
-                      <div className="text-[10px] text-slate-500 uppercase tracking-wide font-bold">Keahlian Spesialisasi:</div>
+                      <div className="text-[10px] text-slate-550 dark:text-slate-450 uppercase tracking-wide font-bold">Keahlian Spesialisasi:</div>
                       <div className="flex flex-wrap gap-1">
                         {tech.teknisi_profiles?.specializations.map((spec: string) => (
                           <span
                             key={spec}
-                            className="text-[9px] font-bold text-slate-300 bg-slate-900 border border-slate-850 px-2.5 py-0.5 rounded-full capitalize"
+                            className="text-[9px] font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-850 px-2.5 py-0.5 rounded-full capitalize"
                           >
                             {spec}
                           </span>
@@ -196,14 +196,14 @@ export default function AdminTeknisiManagementPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-3 border-t border-slate-900 flex justify-end">
+                  <div className="pt-3 border-t border-slate-200 dark:border-slate-900 flex justify-end">
                     <Button
                       onClick={() => handleToggleActive(tech.id, isActive)}
                       disabled={isVerifying}
                       className={cn(
                         'w-full sm:w-auto font-bold rounded-xl text-xs py-5 px-5 flex items-center justify-center gap-1.5 transition-colors',
                         isActive
-                          ? 'border border-slate-800 bg-transparent text-slate-400 hover:text-slate-100 hover:bg-slate-900/50'
+                          ? 'border border-slate-200 dark:border-slate-800 bg-transparent text-slate-500 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900/50'
                           : 'bg-red-650 hover:bg-red-750 text-white'
                       )}
                     >

@@ -205,8 +205,8 @@ export default function AdminOrdersPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-extrabold font-heading text-slate-100">Kelola Pesanan</h1>
-        <p className="text-slate-400 text-sm mt-1">
+        <h1 className="text-3xl font-extrabold font-heading text-slate-800 dark:text-slate-100">Kelola Pesanan</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 font-medium">
           Monitor pekerjaan masuk, alokasi otomatis (Haversine), dan override penugasan teknisi
         </p>
       </div>
@@ -217,17 +217,17 @@ export default function AdminOrdersPage() {
           const isAssigning = assigningOrderId === order.id
           
           return (
-            <Card key={order.id} className="border-slate-900 bg-slate-950 text-white rounded-2xl shadow-md overflow-hidden">
+            <Card key={order.id} className="border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-800 dark:text-white rounded-2xl shadow-md overflow-hidden animate-in fade-in-50 duration-200">
               <CardContent className="p-6 space-y-4">
                 {/* Header Row */}
-                <div className="flex justify-between items-center pb-3 border-b border-slate-900">
+                <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-900">
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono font-bold text-slate-400">{order.order_code}</span>
+                    <span className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400">{order.order_code}</span>
                     <Badge className={cn('px-2.5 py-0.5 rounded-full border text-[9px] font-bold capitalize', STATUS_COLOR[order.status])}>
                       {order.status}
                     </Badge>
                   </div>
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-slate-500 dark:text-slate-400">
                     Total Invoice: <span className="font-bold text-red-500">{formatPrice(order.total)}</span>
                   </div>
                 </div>
@@ -235,29 +235,29 @@ export default function AdminOrdersPage() {
                 {/* Grid Details */}
                 <div className="grid md:grid-cols-2 gap-4 text-xs">
                   <div className="space-y-2.5">
-                    <div className="flex items-center gap-2 text-slate-350">
-                      <Laptop className="h-4 w-4 text-slate-500 shrink-0" />
+                    <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                      <Laptop className="h-4 w-4 text-slate-400 dark:text-slate-550 shrink-0" />
                       <span className="uppercase font-semibold">{order.device_name} ({order.device_type})</span>
                     </div>
-                    <div className="flex items-start gap-2 text-slate-350 leading-relaxed">
-                      <MapPin className="h-4 w-4 text-slate-500 shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-2 text-slate-600 dark:text-slate-400 leading-relaxed">
+                      <MapPin className="h-4 w-4 text-slate-400 dark:text-slate-550 shrink-0 mt-0.5" />
                       <span>{order.location_address}</span>
                     </div>
                   </div>
 
                   <div className="space-y-2.5">
-                    <div className="flex items-center gap-2 text-slate-350">
-                      <User className="h-4 w-4 text-slate-500 shrink-0" />
-                      <span>Pelanggan: <strong className="text-slate-100">{order.pelanggan?.full_name}</strong></span>
+                    <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                      <User className="h-4 w-4 text-slate-400 dark:text-slate-550 shrink-0" />
+                      <span>Pelanggan: <strong className="text-slate-800 dark:text-slate-100 font-bold">{order.pelanggan?.full_name}</strong></span>
                     </div>
-                    <div className="flex items-center gap-2 text-slate-350">
-                      <Wrench className="h-4 w-4 text-slate-500 shrink-0" />
+                    <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                      <Wrench className="h-4 w-4 text-slate-400 dark:text-slate-550 shrink-0" />
                       <span>
                         Teknisi:{' '}
                         {order.teknisi ? (
                           <strong className="text-red-500 font-bold">{order.teknisi.full_name}</strong>
                         ) : (
-                          <span className="text-amber-500 font-medium italic">Belum dialokasikan</span>
+                          <span className="text-amber-500 font-semibold italic">Belum dialokasikan</span>
                         )}
                       </span>
                     </div>
@@ -266,7 +266,7 @@ export default function AdminOrdersPage() {
 
                 {/* Dispatch Controls */}
                 {isPending && (
-                  <div className="pt-3 border-t border-slate-900 space-y-4">
+                  <div className="pt-3 border-t border-slate-150 dark:border-slate-900 space-y-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <Button
                         onClick={() => handleAutoAssign(order.id)}
@@ -284,7 +284,7 @@ export default function AdminOrdersPage() {
                       <Button
                         variant="outline"
                         onClick={() => setAssigningOrderId(isAssigning ? null : order.id)}
-                        className="border-slate-800 hover:bg-slate-900 text-slate-300 font-bold rounded-xl text-xs flex items-center gap-1.5"
+                        className="border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs flex items-center gap-1.5"
                       >
                         <UserCheck className="h-3.5 w-3.5" />
                         Alokasi Manual (Override)
@@ -293,8 +293,8 @@ export default function AdminOrdersPage() {
 
                     {/* Manual Assign Panel dropdown */}
                     {isAssigning && (
-                      <div className="bg-slate-900/50 p-4 border border-slate-900 rounded-xl space-y-3 animate-in slide-in-from-top-2 duration-150">
-                        <div className="text-xs font-semibold text-slate-400">Pilih Teknisi untuk Ditugaskan:</div>
+                      <div className="bg-slate-55/50 dark:bg-slate-900/50 p-4 border border-slate-200 dark:border-slate-900 rounded-xl space-y-3 animate-in slide-in-from-top-2 duration-150">
+                        <div className="text-xs font-semibold text-slate-550 dark:text-slate-400">Pilih Teknisi untuk Ditugaskan:</div>
                         {technicians.length === 0 ? (
                           <div className="text-xs text-slate-500 italic">Tidak ada teknisi terdaftar aktif.</div>
                         ) : (
@@ -306,11 +306,11 @@ export default function AdminOrdersPage() {
                                   key={tech.id}
                                   onClick={() => handleManualAssign(order.id, tech.id)}
                                   disabled={loadingAssign !== null}
-                                  className="p-3 border border-slate-800 bg-slate-950 text-left rounded-xl hover:border-red-500/50 transition-colors flex items-center justify-between text-xs cursor-pointer active:scale-[0.99]"
+                                  className="p-3 border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-left rounded-xl hover:border-red-500/50 transition-colors flex items-center justify-between text-xs cursor-pointer active:scale-[0.99]"
                                 >
                                   <div>
-                                    <div className="font-bold text-slate-200">{tech.full_name}</div>
-                                    <div className="text-[10px] text-slate-500 capitalize pt-0.5">
+                                    <div className="font-bold text-slate-800 dark:text-slate-200">{tech.full_name}</div>
+                                    <div className="text-[10px] text-slate-500 dark:text-slate-400 capitalize pt-0.5">
                                       Spesialisasi: {tech.teknisi_profiles?.specializations.join(', ')}
                                     </div>
                                   </div>
@@ -319,7 +319,7 @@ export default function AdminOrdersPage() {
                                       'px-2 py-0.5 text-[8px] font-bold rounded-full capitalize shrink-0 border',
                                       isAvailable
                                         ? 'bg-emerald-950/80 text-emerald-400 border-emerald-900'
-                                        : 'bg-slate-900 text-slate-500 border-slate-850'
+                                        : 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-550 border-slate-200 dark:border-slate-850'
                                     )}
                                   >
                                     {tech.teknisi_profiles?.status}

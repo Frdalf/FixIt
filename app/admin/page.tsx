@@ -138,53 +138,53 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-extrabold font-heading text-slate-100">Dashboard</h1>
-        <p className="text-slate-400 text-sm mt-1">Konsol monitoring dan statistik platform FixIT</p>
+        <h1 className="text-3xl font-extrabold font-heading text-slate-800 dark:text-slate-100">Dashboard</h1>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 font-medium">Konsol monitoring dan statistik platform FixIT</p>
       </div>
 
       {/* Metrics Grid */}
       <div className="grid md:grid-cols-4 gap-6">
-        <Card className="border-slate-900 bg-slate-950 text-white shadow-md rounded-2xl">
+        <Card className="border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-800 dark:text-white shadow-md rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Pesanan</CardTitle>
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Pesanan</CardTitle>
             <ClipboardList className="h-5 w-5 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-heading">{stats.totalOrders}</div>
-            <p className="text-[10px] text-slate-500 mt-1">Seluruh order perbaikan masuk</p>
+            <div className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100">{stats.totalOrders}</div>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Seluruh order perbaikan masuk</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-900 bg-slate-950 text-white shadow-md rounded-2xl">
+        <Card className="border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-800 dark:text-white shadow-md rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-slate-400">Mitra Teknisi</CardTitle>
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Mitra Teknisi</CardTitle>
             <Users className="h-5 w-5 text-red-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-heading">{stats.activeTechs}</div>
-            <p className="text-[10px] text-slate-500 mt-1">Teknisi aktif terverifikasi</p>
+            <div className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100">{stats.activeTechs}</div>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Teknisi aktif terverifikasi</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-900 bg-slate-950 text-white shadow-md rounded-2xl">
+        <Card className="border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-800 dark:text-white shadow-md rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Pendapatan</CardTitle>
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Pendapatan</CardTitle>
             <TrendingUp className="h-5 w-5 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-heading">{formatPrice(stats.totalRevenue)}</div>
-            <p className="text-[10px] text-slate-500 mt-1">Omzet pembayaran lunas</p>
+            <div className="text-2xl font-bold font-heading text-slate-900 dark:text-slate-100">{formatPrice(stats.totalRevenue)}</div>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Omzet pembayaran lunas</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-900 bg-slate-950 text-white shadow-md rounded-2xl">
+        <Card className="border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-800 dark:text-white shadow-md rounded-2xl">
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-slate-400">Antrean Pending</CardTitle>
+            <CardTitle className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Antrean Pending</CardTitle>
             <Clock className="h-5 w-5 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold font-heading text-amber-400">{stats.pendingOrders}</div>
-            <p className="text-[10px] text-slate-500 mt-1">Order belum dialokasikan</p>
+            <div className="text-2xl font-bold font-heading text-amber-600 dark:text-amber-400">{stats.pendingOrders}</div>
+            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">Order belum dialokasikan</p>
           </CardContent>
         </Card>
       </div>
@@ -192,17 +192,17 @@ export default function AdminDashboardPage() {
       {/* Recent Orders Section */}
       <div className="space-y-4">
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-bold font-heading text-slate-100">Aktivitas Pesanan Terbaru</h2>
+          <h2 className="text-lg font-bold font-heading text-slate-800 dark:text-slate-100">Aktivitas Pesanan Terbaru</h2>
           <Link href="/admin/orders" className="text-xs text-red-500 hover:underline flex items-center gap-1">
             Lihat semua <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
 
-        <Card className="border-slate-900 bg-slate-950 text-white shadow-md rounded-2xl overflow-hidden">
+        <Card className="border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-800 dark:text-white shadow-md rounded-2xl overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left">
-                <thead className="bg-slate-900/40 text-slate-400 border-b border-slate-900 font-bold uppercase tracking-wider">
+                <thead className="bg-slate-50 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-900 font-bold uppercase tracking-wider">
                   <tr>
                     <th className="px-6 py-4">Kode</th>
                     <th className="px-6 py-4">Pelanggan</th>
@@ -211,13 +211,13 @@ export default function AdminDashboardPage() {
                     <th className="px-6 py-4">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-900/50">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-900/50">
                   {recentOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-slate-900/20">
-                      <td className="px-6 py-4 font-mono font-bold text-slate-300">{order.order_code}</td>
-                      <td className="px-6 py-4 text-slate-200">{order.pelanggan?.full_name || 'Pelanggan'}</td>
-                      <td className="px-6 py-4 flex items-center gap-1.5 uppercase text-slate-250 font-medium">
-                        <Laptop className="h-3.5 w-3.5 shrink-0 text-slate-400" />
+                    <tr key={order.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/20">
+                      <td className="px-6 py-4 font-mono font-bold text-slate-600 dark:text-slate-300">{order.order_code}</td>
+                      <td className="px-6 py-4 text-slate-800 dark:text-slate-200">{order.pelanggan?.full_name || 'Pelanggan'}</td>
+                      <td className="px-6 py-4 flex items-center gap-1.5 uppercase text-slate-700 dark:text-slate-250 font-medium">
+                        <Laptop className="h-3.5 w-3.5 shrink-0 text-slate-400 dark:text-slate-550" />
                         {order.device_name}
                       </td>
                       <td className="px-6 py-4">
@@ -225,7 +225,7 @@ export default function AdminDashboardPage() {
                           {order.status}
                         </Badge>
                       </td>
-                      <td className="px-6 py-4 font-semibold text-slate-100">{formatPrice(order.total)}</td>
+                      <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-100">{formatPrice(order.total)}</td>
                     </tr>
                   ))}
                 </tbody>
