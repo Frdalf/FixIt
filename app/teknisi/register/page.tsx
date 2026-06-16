@@ -79,7 +79,7 @@ export default function TeknisiRegisterPage() {
       toast.success(
         'Registrasi berhasil! Akun Anda dinonaktifkan sementara untuk diverifikasi Admin.'
       )
-      router.push('/teknisi/login?error=inactive')
+      router.push('/?message=waiting_verification')
     }
   }
 

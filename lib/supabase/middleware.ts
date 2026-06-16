@@ -96,8 +96,8 @@ export async function updateSession(request: NextRequest) {
       // Inactive Technician check
       if (profile.role === 'teknisi' && !profile.is_active) {
         if (path.startsWith('/teknisi') && path !== '/teknisi/login' && path !== '/teknisi/register') {
-          url.pathname = '/teknisi/login'
-          url.searchParams.set('error', 'inactive')
+          url.pathname = '/'
+          url.searchParams.set('message', 'waiting_verification')
           return NextResponse.redirect(url)
         }
       }
@@ -118,7 +118,12 @@ export async function updateSession(request: NextRequest) {
         if (profile.role === 'admin') {
           url.pathname = '/admin'
         } else if (profile.role === 'teknisi') {
-          url.pathname = '/teknisi/tasks'
+          if (!profile.is_active) {
+            url.pathname = '/'
+            url.searchParams.set('message', 'waiting_verification')
+          } else {
+            url.pathname = '/teknisi/tasks'
+          }
         } else {
           url.pathname = '/'
         }

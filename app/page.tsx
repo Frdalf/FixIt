@@ -18,6 +18,20 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, Suspense } from 'react'
+import { toast } from 'sonner'
+
+function QueryParamsHandler() {
+  const searchParams = useSearchParams()
+  useEffect(() => {
+    const message = searchParams.get('message')
+    if (message === 'waiting_verification') {
+      toast.info('Akun teknisi Anda sedang menunggu verifikasi dari Admin.')
+    }
+  }, [searchParams])
+  return null
+}
 
 const CATEGORIES = [
   {
@@ -76,6 +90,9 @@ export default function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100">
+      <Suspense fallback={null}>
+        <QueryParamsHandler />
+      </Suspense>
       {/* Header */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-100 dark:border-slate-900 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
