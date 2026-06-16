@@ -21,11 +21,28 @@ export default function TeknisiChatListPage() {
         // Query chats through orders assigned to this technician
         const { data, error } = await supabase
           .from('chats')
-          .select('*, orders!inner(*, pelanggan:profiles(*))')
+          .select('*, orders!inner(*)')
           .eq('orders.teknisi_id', user.id)
           .order('created_at', { ascending: false })
 
         if (!error && data) {
+          // Fetch pelanggan profiles separately to avoid ambiguous foreign key error
+          const pelangganIds = [...new Set(data.map((chat: any) => chat.orders?.pelanggan_id).filter(Boolean))]
+          if (pelangganIds.length > 0) {
+            const { data: profiles } = await supabase
+              .from('profiles')
+              .select('*')
+              .in('id', pelangganIds)
+            
+            if (profiles) {
+              const profilesMap = Object.fromEntries(profiles.map(p => [p.id, p]))
+              data.forEach((chat: any) => {
+                if (chat.orders?.pelanggan_id) {
+                  chat.orders.pelanggan = profilesMap[chat.orders.pelanggan_id]
+                }
+              })
+            }
+          }
           setChats(data)
         }
       } catch (err) {

@@ -21,6 +21,7 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
   const [chat, setChat] = useState<any>(null)
   const [inputText, setInputText] = useState('')
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState<any>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Fetch chat metadata linked to this order
@@ -28,14 +29,26 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
     const fetchChatDetails = async () => {
       try {
         const supabase = createClient()
-        const { data, error } = await supabase
+        const { data: chatData, error } = await supabase
           .from('chats')
-          .select('*, orders!inner(*, teknisi:profiles(*))')
+          .select('*, orders!inner(*)')
           .eq('order_id', orderId)
           .single()
 
-        if (!error && data) {
-          setChat(data)
+        if (!error && chatData) {
+          // Fetch technician profile separately to avoid ambiguous foreign key error
+          if (chatData.orders?.teknisi_id) {
+            const { data: techProfile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', chatData.orders.teknisi_id)
+              .single()
+            
+            chatData.orders.teknisi = techProfile
+          }
+          setChat(chatData)
+        } else if (error) {
+          setFetchError(error)
         }
       } catch (err) {
         console.warn('Error fetching chat session details. Simulating for development.', err)
@@ -90,6 +103,12 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
         <p className="text-sm text-slate-500">
           Pesanan ini belum memiliki sesi obrolan aktif. Pastikan pesanan Anda telah dikonfirmasi oleh teknisi.
         </p>
+        {fetchError && (
+          <div className="p-4 bg-red-50 text-red-600 text-xs text-left rounded-xl overflow-auto">
+            <strong>Error Details:</strong>
+            <pre>{JSON.stringify(fetchError, null, 2)}</pre>
+          </div>
+        )}
         <Link href="/chat">
           <Button className="bg-blue-900 text-white rounded-xl">Kembali ke Daftar Chat</Button>
         </Link>

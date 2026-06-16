@@ -21,11 +21,28 @@ export default function PelangganChatListPage() {
         // Query chats through orders
         const { data, error } = await supabase
           .from('chats')
-          .select('*, orders!inner(*, teknisi:profiles(*))')
+          .select('*, orders!inner(*)')
           .eq('orders.pelanggan_id', user.id)
           .order('created_at', { ascending: false })
 
         if (!error && data) {
+          // Fetch technician profiles separately to avoid ambiguous foreign key error
+          const teknisiIds = [...new Set(data.map((chat: any) => chat.orders?.teknisi_id).filter(Boolean))]
+          if (teknisiIds.length > 0) {
+            const { data: profiles } = await supabase
+              .from('profiles')
+              .select('*')
+              .in('id', teknisiIds)
+            
+            if (profiles) {
+              const profilesMap = Object.fromEntries(profiles.map(p => [p.id, p]))
+              data.forEach((chat: any) => {
+                if (chat.orders?.teknisi_id) {
+                  chat.orders.teknisi = profilesMap[chat.orders.teknisi_id]
+                }
+              })
+            }
+          }
           setChats(data)
         }
       } catch (err) {

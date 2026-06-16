@@ -27,14 +27,24 @@ export default function TeknisiChatRoomPage({ params }: { params: { orderId: str
     const fetchChatDetails = async () => {
       try {
         const supabase = createClient()
-        const { data, error } = await supabase
+        const { data: chatData, error } = await supabase
           .from('chats')
-          .select('*, orders!inner(*, pelanggan:profiles(*))')
+          .select('*, orders!inner(*)')
           .eq('order_id', orderId)
           .single()
 
-        if (!error && data) {
-          setChat(data)
+        if (!error && chatData) {
+          // Fetch pelanggan profile separately to avoid ambiguous foreign key error
+          if (chatData.orders?.pelanggan_id) {
+            const { data: pelangganProfile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', chatData.orders.pelanggan_id)
+              .single()
+            
+            chatData.orders.pelanggan = pelangganProfile
+          }
+          setChat(chatData)
         }
       } catch (err) {
         console.warn('Error fetching chat session details. Simulating for development.', err)
