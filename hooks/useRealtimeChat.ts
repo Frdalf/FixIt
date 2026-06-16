@@ -10,8 +10,8 @@ export function useRealtimeChat(chatId: string | undefined) {
   useEffect(() => {
     if (!chatId) return
 
-    const fetchMessages = async () => {
-      setLoading(true)
+    const fetchMessages = async (isBackground = false) => {
+      if (!isBackground) setLoading(true)
       const { data, error } = await supabase
         .from('messages')
         .select('*')
@@ -21,7 +21,7 @@ export function useRealtimeChat(chatId: string | undefined) {
       if (!error && data) {
         setMessages(data)
       }
-      setLoading(false)
+      if (!isBackground) setLoading(false)
     }
 
     fetchMessages()
@@ -47,8 +47,15 @@ export function useRealtimeChat(chatId: string | undefined) {
       )
       .subscribe()
 
+    // Fallback: Polling every 3 seconds to ensure messages are received
+    // even if Supabase Realtime is not enabled in the database settings
+    const pollInterval = setInterval(() => {
+      fetchMessages(true)
+    }, 3000)
+
     return () => {
       supabase.removeChannel(channel)
+      clearInterval(pollInterval)
     }
   }, [chatId])
 
