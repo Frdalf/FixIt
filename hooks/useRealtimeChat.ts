@@ -65,15 +65,26 @@ export function useRealtimeChat(chatId: string | undefined) {
     }
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
         .insert({
           chat_id: chatId,
           sender_id: senderId,
           content,
         })
+        .select()
+        .single()
 
       if (error) throw error
+
+      // Update locally to show the message immediately
+      if (data) {
+        setMessages((prev) => {
+          // Deduplicate in case Realtime also fired
+          if (prev.some((msg) => msg.id === data.id)) return prev
+          return [...prev, data as Message]
+        })
+      }
     } catch (err) {
       console.warn('Failed to send message to database, simulating local append.', err)
       // Local append simulator
