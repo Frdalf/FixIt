@@ -193,10 +193,13 @@ export default function LandingPage() {
                       <cat.icon className="h-6 w-6" />
                     </div>
                     <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors font-heading">{cat.name}</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{cat.description}</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{cat.description}</p>
                   </div>
-                  <Link href={user ? `/repairs/${cat.slug}` : '/login'} className="inline-flex items-center gap-1 text-sm font-semibold text-blue-950 dark:text-blue-450 hover:underline pt-4 group-hover:gap-2 transition-all">
-                    Pilih Layanan <ChevronRight className="h-4 w-4" />
+                  <Link 
+                    href={user ? `/repairs/${cat.slug}` : '/login'} 
+                    className="mt-4 flex items-center justify-center gap-2 w-full bg-blue-900 dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-bold transition-all duration-200 active:scale-95 hover:shadow-md"
+                  >
+                    Pilih Layanan <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </CardContent>
               </Card>
