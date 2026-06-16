@@ -16,7 +16,7 @@ const CATEGORIES = [
     slug: 'hardware',
     description: 'Ganti LCD, keyboard, baterai, upgrade SSD/RAM, perbaikan port, dll.',
     icon: Laptop,
-    color: 'bg-blue-50 text-blue-600 border-blue-100',
+    color: 'bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-950/50 dark:text-blue-400 dark:border-blue-900/50',
     count: '8 Layanan',
   },
   {
@@ -24,7 +24,7 @@ const CATEGORIES = [
     slug: 'software',
     description: 'Install OS, recovery data, bersihkan virus, optimasi performa, dll.',
     icon: Wrench,
-    color: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    color: 'bg-indigo-50 text-indigo-600 border-indigo-100 dark:bg-indigo-950/50 dark:text-indigo-400 dark:border-indigo-900/50',
     count: '5 Layanan',
   },
   {
@@ -32,7 +32,7 @@ const CATEGORIES = [
     slug: 'cleaning',
     description: 'Deep clean internal, pembersihan fan/port, ganti thermal paste.',
     icon: Sparkles,
-    color: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    color: 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-900/50',
     count: '3 Layanan',
   },
   {
@@ -40,7 +40,7 @@ const CATEGORIES = [
     slug: 'estetika',
     description: 'Pasang skin laptop custom, tempered glass, pelindung anti-gores body.',
     icon: ShieldCheck,
-    color: 'bg-amber-50 text-amber-600 border-amber-100',
+    color: 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-900/50',
     count: '3 Layanan',
   },
 ]
@@ -49,10 +49,10 @@ export default function RepairsPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="space-y-2 mb-8">
-        <h1 className="text-2xl md:text-3xl font-extrabold font-heading text-slate-800">
+        <h1 className="text-2xl md:text-3xl font-extrabold font-heading text-slate-800 dark:text-slate-100">
           Pilih Kategori Servis
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Silakan pilih kategori perbaikan laptop yang Anda butuhkan
         </p>
       </div>
@@ -60,25 +60,25 @@ export default function RepairsPage() {
       <div className="grid gap-4 sm:grid-cols-2">
         {CATEGORIES.map((cat) => (
           <Link href={`/repairs/${cat.slug}`} key={cat.slug}>
-            <Card className="border-slate-100 hover:border-blue-100 hover:shadow-md transition-all rounded-2xl cursor-pointer h-full group">
+            <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-100 dark:hover:border-blue-900 hover:shadow-md transition-all rounded-2xl cursor-pointer h-full group">
               <CardContent className="p-6 flex flex-col justify-between h-full space-y-4">
                 <div className="flex items-center justify-between">
                   <div className={`p-3 rounded-xl border ${cat.color}`}>
                     <cat.icon className="h-6 w-6" />
                   </div>
-                  <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full">
+                  <span className="text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-1 rounded-full">
                     {cat.count}
                   </span>
                 </div>
                 <div className="space-y-1.5">
-                  <h3 className="text-lg font-bold text-slate-800 font-heading group-hover:text-blue-900 transition-colors">
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-200 font-heading group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors">
                     {cat.name}
                   </h3>
-                  <p className="text-xs text-slate-600 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                     {cat.description}
                   </p>
                 </div>
-                <div className="flex items-center gap-1 text-xs font-bold text-blue-900 group-hover:underline pt-2">
+                <div className="flex items-center gap-1 text-xs font-bold text-blue-900 dark:text-blue-400 group-hover:underline pt-2">
                   Lihat Layanan <ChevronRight className="h-3.5 w-3.5" />
                 </div>
               </CardContent>
