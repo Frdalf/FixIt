@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Wrench, History, MessageSquare, User, Laptop } from 'lucide-react'
+import { Home, Wrench, History, MessageSquare, User, Laptop, HelpCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
 
@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { label: 'Beranda', href: '/', icon: Home },
   { label: 'Servis', href: '/repairs', icon: Wrench },
   { label: 'Riwayat', href: '/history', icon: History },
+  { label: 'Konsultasi', href: '/konsultasi', icon: HelpCircle },
   { label: 'Chat', href: '/chat', icon: MessageSquare },
   { label: 'Profil', href: '/profile', icon: User },
 ]

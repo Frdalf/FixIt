@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { Card, CardContent } from '@/components/ui/card'
-import { MessageSquare, Laptop, ChevronRight, Loader2 } from 'lucide-react'
+import { MessageSquare, Laptop, ChevronRight, Loader2, HelpCircle } from 'lucide-react'
 
 export default function TeknisiChatListPage() {
   const { user } = useAuth()
@@ -83,6 +83,8 @@ export default function TeknisiChatListPage() {
         ) : (
           chats.map((chat) => {
             const pelangganName = chat.orders?.pelanggan?.full_name || 'Pelanggan FixIT'
+            const isKonsultasi = chat.orders.device_name === 'Konsultasi Online'
+            
             return (
               <Link href={`/teknisi/chat/${chat.orders.id}`} key={chat.id}>
                 <Card className="border-slate-100 hover:border-amber-250 hover:shadow-sm transition-all rounded-2xl bg-white cursor-pointer group">
@@ -96,7 +98,11 @@ export default function TeknisiChatListPage() {
                           {pelangganName}
                         </h3>
                         <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                          <Laptop className="h-3.5 w-3.5" />
+                          {isKonsultasi ? (
+                            <HelpCircle className="h-3.5 w-3.5 text-blue-500" />
+                          ) : (
+                            <Laptop className="h-3.5 w-3.5" />
+                          )}
                           <span>
                             {chat.orders.device_name} ({chat.orders.order_code})
                           </span>
