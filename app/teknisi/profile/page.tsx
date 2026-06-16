@@ -6,15 +6,25 @@ import { createClient } from '@/lib/supabase/client'
 import { useAuth } from '@/hooks/useAuth'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { LogOut, Star, Award, Shield, Phone, Mail, Loader2 } from 'lucide-react'
+import { LogOut, Star, Award, Shield, Phone, Mail, Loader2, MapPin, Save } from 'lucide-react'
 import { toast } from 'sonner'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
+import dynamic from 'next/dynamic'
+
+const MapPicker = dynamic(() => import('@/components/shared/MapPicker'), { ssr: false })
 
 export default function TeknisiProfilePage() {
   const { user, profile, signOut } = useAuth()
   const router = useRouter()
   const [techProfile, setTechProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+
+  // Location Update State
+  const [editingLocation, setEditingLocation] = useState(false)
+  const [lat, setLat] = useState<number | null>(null)
+  const [lng, setLng] = useState<number | null>(null)
+  const [address, setAddress] = useState('')
+  const [updatingLocation, setUpdatingLocation] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -30,6 +40,8 @@ export default function TeknisiProfilePage() {
 
         if (!error && data) {
           setTechProfile(data)
+          setLat(data.latitude || null)
+          setLng(data.longitude || null)
         }
       } catch (err) {
         console.warn('Error fetching technician profile stats. Simulating for development.', err)
@@ -37,6 +49,8 @@ export default function TeknisiProfilePage() {
           rating_avg: 4.8,
           total_jobs: 15,
           specializations: ['hardware', 'software', 'cleaning'],
+          latitude: null,
+          longitude: null,
         })
       } finally {
         setLoading(false)
@@ -50,6 +64,31 @@ export default function TeknisiProfilePage() {
     await signOut()
     toast.success('Berhasil keluar')
     router.push('/teknisi/login')
+  }
+
+  const handleUpdateLocation = async () => {
+    if (!user || lat === null || lng === null) return
+    setUpdatingLocation(true)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('teknisi_profiles')
+        .update({
+          latitude: lat,
+          longitude: lng,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id)
+
+      if (error) throw error
+      
+      toast.success('Lokasi operasional berhasil diperbarui!')
+      setEditingLocation(false)
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal memperbarui lokasi')
+    } finally {
+      setUpdatingLocation(false)
+    }
   }
 
   if (loading) {
@@ -125,6 +164,73 @@ export default function TeknisiProfilePage() {
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Location Update Card */}
+        <Card className="border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm bg-white dark:bg-slate-900 overflow-hidden">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-amber-500" />
+                <h3 className="font-bold text-slate-800 dark:text-slate-200">Lokasi Operasional</h3>
+              </div>
+              <Button
+                variant={editingLocation ? "outline" : "secondary"}
+                size="sm"
+                onClick={() => setEditingLocation(!editingLocation)}
+                className="text-xs h-8"
+              >
+                {editingLocation ? 'Batal' : 'Ubah Lokasi'}
+              </Button>
+            </div>
+
+            {editingLocation ? (
+              <div className="space-y-4">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Geser pin pada peta untuk menentukan area jangkauan servis Anda.
+                </p>
+                <MapPicker
+                  initialLat={lat || -6.2088}
+                  initialLng={lng || 106.8456}
+                  onChange={(newLat, newLng, newAddress) => {
+                    setLat(newLat)
+                    setLng(newLng)
+                    setAddress(newAddress)
+                  }}
+                />
+                {address && (
+                  <p className="text-xs bg-slate-50 dark:bg-slate-800 p-2 rounded text-slate-600 dark:text-slate-300">
+                    <span className="font-semibold">Titik terdeteksi:</span> {address}
+                  </p>
+                )}
+                <Button 
+                  onClick={handleUpdateLocation} 
+                  disabled={updatingLocation}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  {updatingLocation ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Save className="h-4 w-4 mr-2" />
+                  )}
+                  Simpan Lokasi Baru
+                </Button>
+              </div>
+            ) : (
+              <div className="text-sm text-slate-500 dark:text-slate-400">
+                {lat && lng ? (
+                  <div className="space-y-1">
+                    <p>Lokasi saat ini diatur pada koordinat:</p>
+                    <p className="font-mono text-xs bg-slate-50 dark:bg-slate-800 p-2 rounded">
+                      {lat.toFixed(6)}, {lng.toFixed(6)}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="italic">Anda belum mengatur lokasi operasional.</p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
