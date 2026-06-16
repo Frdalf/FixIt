@@ -61,11 +61,25 @@ export async function autoAssignTechnician(supabase: SupabaseClient, orderId: st
     }
 
     // 3. Filter technicians by specialization and calculate distance
-    const candidates = technicians
+    let candidates = technicians
       .filter((tech) => {
-        // Must support at least one needed specialization
-        return tech.specializations.some((spec: string) =>
-          neededSpecializations.includes(spec)
+        // Safe parsing of specializations
+        let specs: string[] = []
+        if (Array.isArray(tech.specializations)) {
+          specs = tech.specializations
+        } else if (typeof tech.specializations === 'string') {
+          try {
+            specs = JSON.parse(tech.specializations)
+          } catch (e) {
+            specs = [tech.specializations]
+          }
+        }
+
+        if (!specs || specs.length === 0) return false
+
+        // Must support at least one needed specialization (case-insensitive)
+        return specs.some((spec: string) =>
+          neededSpecializations.includes(spec.toLowerCase())
         )
       })
       .map((tech) => {
@@ -82,8 +96,25 @@ export async function autoAssignTechnician(supabase: SupabaseClient, orderId: st
         }
       })
 
+    // Fallback: If no technician matches specializations, assign to any available technician
     if (candidates.length === 0) {
-      return { success: false, message: 'No technicians match the required specialties' }
+      candidates = technicians.map((tech) => {
+        const dist = getDistance(
+          Number(order.location_lat || 0),
+          Number(order.location_lng || 0),
+          Number(tech.latitude || 0),
+          Number(tech.longitude || 0)
+        )
+        return {
+          id: tech.id,
+          name: tech.profiles.full_name,
+          distance: dist,
+        }
+      })
+    }
+
+    if (candidates.length === 0) {
+      return { success: false, message: 'No technicians available at all' }
     }
 
     // 4. Sort by distance ascending

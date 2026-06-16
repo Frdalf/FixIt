@@ -12,8 +12,11 @@ import {
   ArrowRight,
   Laptop,
   Loader2,
+  AlertCircle,
+  Bell,
 } from 'lucide-react'
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 const STATUS_COLOR: Record<string, string> = {
   menunggu: 'bg-amber-950 text-amber-400 border-amber-900',
@@ -24,6 +27,14 @@ const STATUS_COLOR: Record<string, string> = {
   dibatalkan: 'bg-rose-950 text-rose-400 border-rose-900',
 }
 
+interface SystemNotification {
+  id: string
+  title: string
+  body: string
+  related_id: string | null
+  created_at: string
+}
+
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
     totalOrders: 0,
@@ -32,6 +43,7 @@ export default function AdminDashboardPage() {
     pendingOrders: 0,
   })
   const [recentOrders, setRecentOrders] = useState<any[]>([])
+  const [systemNotifications, setSystemNotifications] = useState<SystemNotification[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -72,6 +84,15 @@ export default function AdminDashboardPage() {
           .order('created_at', { ascending: false })
           .limit(5)
 
+        // 6. Fetch system notifications (user_id = null, type = 'system')
+        const { data: notifications } = await supabase
+          .from('notifications')
+          .select('*')
+          .is('user_id', null)
+          .eq('type', 'system')
+          .order('created_at', { ascending: false })
+          .limit(50)
+
         setStats({
           totalOrders: orderCount || 0,
           activeTechs: techCount || 0,
@@ -79,6 +100,7 @@ export default function AdminDashboardPage() {
           pendingOrders: pendingCount || 0,
         })
         setRecentOrders(recent || [])
+        setSystemNotifications(notifications || [])
       } catch (err) {
         console.warn('DB error fetching dashboard data. Using mock stats.', err)
         // Mock data fallback
@@ -110,6 +132,7 @@ export default function AdminDashboardPage() {
             pelanggan: { full_name: 'Siti Aminah' },
           },
         ])
+        setSystemNotifications([])
       } finally {
         setLoading(false)
       }
@@ -188,6 +211,59 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* System Notifications Panel */}
+      {systemNotifications.length > 0 && (
+        <Card className="border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/30 shadow-md rounded-2xl">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-red-500" />
+              <CardTitle className="text-sm font-bold text-red-800 dark:text-red-300">
+                System Notifications
+              </CardTitle>
+              <Badge className="bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+                {systemNotifications.length}
+              </Badge>
+            </div>
+            <Bell className="h-4 w-4 text-red-500" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {systemNotifications.map((notification) => (
+              <div
+                key={notification.id}
+                className="p-3 bg-white dark:bg-slate-950 border border-red-200 dark:border-red-900 rounded-lg"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-bold text-red-700 dark:text-red-400 mb-1">
+                      {notification.title}
+                    </h4>
+                    <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
+                      {notification.body}
+                    </p>
+                    {notification.related_id && (
+                      <Link
+                        href={`/admin/orders`}
+                        className="text-xs text-red-600 dark:text-red-400 hover:underline mt-1 inline-block"
+                      >
+                        View Order →
+                      </Link>
+                    )}
+                  </div>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                    {new Date(notification.created_at).toLocaleString('id-ID', {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Recent Orders Section */}
       <div className="space-y-4">
