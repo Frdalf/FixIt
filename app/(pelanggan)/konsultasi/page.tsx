@@ -112,9 +112,9 @@ export default function KonsultasiPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-900" />
-        <span className="text-sm text-slate-500 font-medium mt-2">Memuat daftar teknisi...</span>
+      <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-900 dark:text-blue-500" />
+        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-2">Memuat daftar teknisi...</span>
       </div>
     )
   }
@@ -122,19 +122,19 @@ export default function KonsultasiPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl pb-24">
       <div className="space-y-2 mb-8 text-center md:text-left">
-        <h1 className="text-3xl font-extrabold font-heading text-slate-800">
+        <h1 className="text-3xl font-extrabold font-heading text-slate-800 dark:text-slate-100">
           Konsultasi Teknisi
         </h1>
-        <p className="text-slate-500">
+        <p className="text-slate-500 dark:text-slate-400">
           Pilih teknisi yang tersedia untuk berdiskusi masalah perangkat Anda sebelum melakukan pemesanan.
         </p>
       </div>
 
       {technicians.length === 0 ? (
-        <div className="text-center py-16 bg-white border border-slate-100 rounded-2xl p-6 text-slate-500 space-y-3">
-          <MessageCircle className="h-12 w-12 text-slate-300 mx-auto" />
-          <div className="text-lg font-medium text-slate-700">Tidak ada teknisi yang online</div>
-          <p className="text-sm text-slate-400 max-w-sm mx-auto">
+        <div className="text-center py-16 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 text-slate-500 dark:text-slate-400 space-y-3">
+          <MessageCircle className="h-12 w-12 text-slate-300 dark:text-slate-600 mx-auto" />
+          <div className="text-lg font-medium text-slate-700 dark:text-slate-300">Tidak ada teknisi yang online</div>
+          <p className="text-sm text-slate-400 dark:text-slate-500 max-w-sm mx-auto">
             Mohon maaf, saat ini tidak ada teknisi yang tersedia untuk konsultasi. Silakan coba beberapa saat lagi.
           </p>
         </div>
@@ -145,21 +145,21 @@ export default function KonsultasiPage() {
             const name = tech.profiles?.full_name || 'Teknisi FixIT'
             
             return (
-              <Card key={tech.id} className="border-slate-100 hover:shadow-md transition-all rounded-2xl bg-white overflow-hidden group flex flex-col">
+              <Card key={tech.id} className="border-slate-100 dark:border-slate-800 hover:shadow-md transition-all rounded-2xl bg-white dark:bg-slate-900 overflow-hidden group flex flex-col">
                 <CardContent className="p-6 flex-1 flex flex-col">
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="h-14 w-14 rounded-2xl bg-blue-50 text-blue-900 font-bold flex items-center justify-center text-lg shadow-sm shrink-0">
+                    <div className="h-14 w-14 rounded-2xl bg-blue-50 dark:bg-slate-800/50 text-blue-900 dark:text-blue-400 font-bold flex items-center justify-center text-lg shadow-sm shrink-0">
                       {name.slice(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-800 text-lg font-heading group-hover:text-blue-900 transition-colors flex items-center gap-1.5">
+                      <h3 className="font-bold text-slate-800 dark:text-slate-200 text-lg font-heading group-hover:text-blue-900 dark:group-hover:text-blue-400 transition-colors flex items-center gap-1.5">
                         {name}
                         <BadgeCheck className="h-4 w-4 text-blue-500" />
                       </h3>
                       <div className="flex items-center gap-1.5 mt-1">
                         <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                        <span className="text-sm font-bold text-slate-700">{tech.rating_avg || '5.0'}</span>
-                        <span className="text-xs text-slate-400">({tech.total_jobs} tugas)</span>
+                        <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{tech.rating_avg || '5.0'}</span>
+                        <span className="text-xs text-slate-400 dark:text-slate-500">({tech.total_jobs} tugas)</span>
                       </div>
                     </div>
                   </div>
@@ -167,7 +167,7 @@ export default function KonsultasiPage() {
                   <div className="space-y-3 mb-6 flex-1">
                     <div className="flex flex-wrap gap-1.5">
                       {tech.specializations?.map((spec: string, idx: number) => (
-                        <Badge key={idx} variant="secondary" className="bg-slate-100 text-slate-600 text-[10px] uppercase font-bold tracking-wider rounded-md">
+                        <Badge key={idx} variant="secondary" className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] uppercase font-bold tracking-wider rounded-md">
                           {spec}
                         </Badge>
                       ))}
@@ -177,7 +177,7 @@ export default function KonsultasiPage() {
                   <Button
                     onClick={() => handleStartConsultation(tech.id)}
                     disabled={startingChat !== null}
-                    className="w-full bg-blue-900 hover:bg-blue-800 text-white rounded-xl py-6 font-bold shadow-sm transition-all"
+                    className="w-full bg-blue-900 dark:bg-blue-600 hover:bg-blue-800 dark:hover:bg-blue-700 text-white rounded-xl py-6 font-bold shadow-sm transition-all"
                   >
                     {isStarting ? (
                       <>

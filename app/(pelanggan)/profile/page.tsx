@@ -23,31 +23,31 @@ export default function PelangganProfilePage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-md pb-24">
       <div className="space-y-6">
-        <h1 className="text-2xl font-extrabold font-heading text-slate-800">Profil Saya</h1>
+        <h1 className="text-2xl font-extrabold font-heading text-slate-800 dark:text-slate-100">Profil Saya</h1>
 
         {/* User Card */}
-        <Card className="border-slate-100 rounded-2xl shadow-sm bg-white overflow-hidden">
+        <Card className="border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm bg-white dark:bg-slate-900 overflow-hidden">
           <div className="h-20 bg-blue-900" />
           <CardContent className="p-6 pt-0 relative">
-            <div className="h-16 w-16 rounded-full bg-amber-500 text-white font-extrabold text-2xl flex items-center justify-center border-4 border-white absolute -top-8 left-6 shadow-sm">
+            <div className="h-16 w-16 rounded-full bg-amber-500 text-white font-extrabold text-2xl flex items-center justify-center border-4 border-white dark:border-slate-900 absolute -top-8 left-6 shadow-sm">
               {profile.full_name.slice(0, 2).toUpperCase()}
             </div>
             
             <div className="pt-10">
-              <h2 className="text-lg font-bold text-slate-800 font-heading">{profile.full_name}</h2>
-              <span className="text-[10px] font-bold text-blue-900 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full capitalize mt-1 inline-block">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200 font-heading">{profile.full_name}</h2>
+              <span className="text-[10px] font-bold text-blue-900 dark:text-blue-400 bg-blue-50 dark:bg-slate-800/50 border border-blue-100 dark:border-blue-900/50 px-2 py-0.5 rounded-full capitalize mt-1 inline-block">
                 {profile.role}
               </span>
             </div>
 
-            <div className="mt-6 space-y-4 border-t border-slate-100 pt-5 text-sm text-slate-650">
+            <div className="mt-6 space-y-4 border-t border-slate-100 dark:border-slate-800 pt-5 text-sm text-slate-650 dark:text-slate-400">
               <div className="flex items-center gap-3">
-                <Mail className="h-4.5 w-4.5 text-slate-400 shrink-0" />
+                <Mail className="h-4.5 w-4.5 text-slate-400 dark:text-slate-500 shrink-0" />
                 <span>{profile.phone || 'Nomor WhatsApp belum diatur'}</span>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="h-4.5 w-4.5 text-slate-400 shrink-0" />
-                <span className="text-slate-500">Pelanggan Aktif</span>
+                <Phone className="h-4.5 w-4.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                <span className="text-slate-500 dark:text-slate-400">Pelanggan Aktif</span>
               </div>
             </div>
           </CardContent>
@@ -58,7 +58,7 @@ export default function PelangganProfilePage() {
           <CardContent className="p-4 flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Tema Tampilan</span>
-              <span className="text-[10px] text-slate-500">Pilih tema terang, gelap, atau sistem</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400">Pilih tema terang, gelap, atau sistem</span>
             </div>
             <ThemeToggle />
           </CardContent>
