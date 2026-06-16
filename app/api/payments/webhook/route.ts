@@ -32,7 +32,7 @@ export async function POST(request: Request) {
         await supabase
           .from('orders')
           .update({
-            status: 'dikonfirmasi',
+            status: 'menunggu_teknisi',
           })
           .eq('id', orderId)
 
@@ -105,12 +105,12 @@ export async function POST(request: Request) {
     if (transaction_status === 'capture') {
       if (fraud_status === 'accept') {
         finalPaymentStatus = 'paid'
-        finalOrderStatus = 'dikonfirmasi'
+        finalOrderStatus = 'menunggu_teknisi'
         isPaid = true
       }
     } else if (transaction_status === 'settlement') {
       finalPaymentStatus = 'paid'
-      finalOrderStatus = 'dikonfirmasi'
+      finalOrderStatus = 'menunggu_teknisi'
       isPaid = true
     } else if (
       transaction_status === 'cancel' ||

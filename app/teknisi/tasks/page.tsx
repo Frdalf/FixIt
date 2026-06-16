@@ -21,10 +21,12 @@ import {
   Loader2,
   ToggleLeft,
   ToggleRight,
+  Zap,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const STATUS_METADATA: Record<string, { label: string; color: string }> = {
+  menunggu_teknisi: { label: 'Tersedia', color: 'bg-amber-100 text-amber-800' },
   dikonfirmasi: { label: 'Tugas Baru', color: 'bg-blue-100 text-blue-800' },
   berangkat: { label: 'Otw Lokasi', color: 'bg-indigo-100 text-indigo-800' },
   diproses: { label: 'Sedang Diservis', color: 'bg-purple-100 text-purple-800' },
@@ -39,7 +41,7 @@ export default function TeknisiTasksPage() {
   const [tasks, setTasks] = useState<any[]>([])
   const [techProfile, setTechProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'active' | 'completed'>('active')
+  const [activeTab, setActiveTab] = useState<'available' | 'active' | 'completed'>('available')
   const [updatingStatus, setUpdatingStatus] = useState(false)
 
   const fetchTechData = async () => {
@@ -57,14 +59,26 @@ export default function TeknisiTasksPage() {
       setTechProfile(profile)
 
       // 2. Fetch assigned tasks
-      const { data: ordersData, error: ordersError } = await supabase
+      const { data: myOrdersData, error: ordersError } = await supabase
         .from('orders')
         .select('*, order_items(*), payments(*)')
         .eq('teknisi_id', user.id)
         .order('created_at', { ascending: false })
 
+      // 3. Fetch available tasks (job pool)
+      const { data: availableOrdersData, error: availError } = await supabase
+        .from('orders')
+        .select('*, order_items(*), payments(*)')
+        .eq('status', 'menunggu_teknisi')
+        .is('teknisi_id', null)
+        .order('created_at', { ascending: false })
+
       if (ordersError) throw ordersError
-      setTasks(ordersData || [])
+      
+      setTasks([
+        ...(availableOrdersData || []),
+        ...(myOrdersData || [])
+      ])
     } catch (err: any) {
       console.warn('Error fetching technician details. Using mock data.', err)
       // Mock data fallback for developer sandbox
@@ -73,7 +87,8 @@ export default function TeknisiTasksPage() {
         {
           id: 'mock-order-1',
           order_code: 'FIX-928374',
-          status: 'dikonfirmasi',
+          status: 'menunggu_teknisi',
+          teknisi_id: null,
           device_name: 'MacBook Air M1 2020',
           device_type: 'laptop',
           location_address: 'Apartment Mediterania Tower B, Floor 15, Jakarta',
@@ -101,11 +116,9 @@ export default function TeknisiTasksPage() {
           event: '*',
           schema: 'public',
           table: 'orders',
-          filter: `teknisi_id=eq.${user?.id}`,
         },
         () => {
           fetchTechData()
-          toast.success('Daftar pekerjaan Anda diperbarui!')
         }
       )
       .subscribe()
@@ -138,6 +151,28 @@ export default function TeknisiTasksPage() {
       // Mock simulator fallback
       setTechProfile((prev: any) => ({ ...prev, status: nextStatus }))
       toast.success(`Status disimulasikan: ${nextStatus === 'tersedia' ? 'Tersedia' : 'Offline'}`)
+    } finally {
+      setUpdatingStatus(false)
+    }
+  }
+
+  const handleClaimTask = async (taskId: string) => {
+    try {
+      setUpdatingStatus(true)
+      const res = await fetch('/api/orders/claim', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: taskId, teknisiId: user?.id })
+      })
+      const result = await res.json()
+      if (!res.ok) throw new Error(result.message)
+      
+      toast.success('Pekerjaan berhasil diambil!')
+      fetchTechData()
+      setActiveTab('active')
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal mengambil pekerjaan. Mungkin sudah diambil teknisi lain.')
+      fetchTechData()
     } finally {
       setUpdatingStatus(false)
     }
@@ -195,10 +230,12 @@ export default function TeknisiTasksPage() {
 
   // Filter tasks based on active vs completed
   const filteredTasks = tasks.filter((t) => {
-    if (activeTab === 'active') {
-      return ['dikonfirmasi', 'berangkat', 'diproses'].includes(t.status)
+    if (activeTab === 'available') {
+      return t.status === 'menunggu_teknisi' && !t.teknisi_id
+    } else if (activeTab === 'active') {
+      return ['dikonfirmasi', 'berangkat', 'diproses'].includes(t.status) && t.teknisi_id === user?.id
     } else {
-      return ['selesai', 'dibatalkan'].includes(t.status)
+      return ['selesai', 'dibatalkan'].includes(t.status) && t.teknisi_id === user?.id
     }
   })
 
@@ -250,31 +287,42 @@ export default function TeknisiTasksPage() {
       {/* Page Title & Tab Filters */}
       <div className="space-y-4 mb-6">
         <h1 className="text-2xl font-extrabold font-heading text-slate-800">
-          Daftar Pekerjaan
+          Bursa Kerja
         </h1>
 
-        <div className="flex border-b border-slate-200">
+        <div className="flex border-b border-slate-200 overflow-x-auto hide-scrollbar">
+          <button
+            onClick={() => setActiveTab('available')}
+            className={cn(
+              'flex-1 text-center pb-3 text-sm font-bold border-b-2 transition-all whitespace-nowrap px-2',
+              activeTab === 'available'
+                ? 'border-amber-500 text-amber-600 font-extrabold'
+                : 'border-transparent text-slate-450 hover:text-slate-700'
+            )}
+          >
+            Tersedia ({tasks.filter((t) => t.status === 'menunggu_teknisi' && !t.teknisi_id).length})
+          </button>
           <button
             onClick={() => setActiveTab('active')}
             className={cn(
-              'flex-1 text-center pb-3 text-sm font-bold border-b-2 transition-all',
+              'flex-1 text-center pb-3 text-sm font-bold border-b-2 transition-all whitespace-nowrap px-2',
               activeTab === 'active'
                 ? 'border-blue-900 text-blue-900 font-extrabold'
                 : 'border-transparent text-slate-450 hover:text-slate-700'
             )}
           >
-            Aktif ({tasks.filter((t) => ['dikonfirmasi', 'berangkat', 'diproses'].includes(t.status)).length})
+            Aktif ({tasks.filter((t) => ['dikonfirmasi', 'berangkat', 'diproses'].includes(t.status) && t.teknisi_id === user?.id).length})
           </button>
           <button
             onClick={() => setActiveTab('completed')}
             className={cn(
-              'flex-1 text-center pb-3 text-sm font-bold border-b-2 transition-all',
+              'flex-1 text-center pb-3 text-sm font-bold border-b-2 transition-all whitespace-nowrap px-2',
               activeTab === 'completed'
                 ? 'border-blue-900 text-blue-900 font-extrabold'
                 : 'border-transparent text-slate-450 hover:text-slate-700'
             )}
           >
-            Riwayat Selesai ({tasks.filter((t) => ['selesai', 'dibatalkan'].includes(t.status)).length})
+            Riwayat ({tasks.filter((t) => ['selesai', 'dibatalkan'].includes(t.status) && t.teknisi_id === user?.id).length})
           </button>
         </div>
       </div>
@@ -284,7 +332,7 @@ export default function TeknisiTasksPage() {
         {filteredTasks.length === 0 ? (
           <div className="text-center py-16 bg-white border border-slate-100 rounded-2xl p-6 text-slate-500 space-y-3">
             <AlertCircle className="h-8 w-8 text-slate-350 mx-auto" />
-            <div className="text-sm font-medium">Tidak ada pekerjaan {activeTab === 'active' ? 'aktif' : 'selesai'}</div>
+            <div className="text-sm font-medium">Tidak ada pekerjaan {activeTab}</div>
           </div>
         ) : (
           filteredTasks.map((task) => {
@@ -328,41 +376,53 @@ export default function TeknisiTasksPage() {
                       </div>
                     ))}
                     <div className="border-t border-slate-200/50 pt-2 mt-2 flex justify-between items-center text-xs font-bold text-blue-900">
-                      <span>Total Invoice</span>
-                      <span>{formatPrice(task.total)}</span>
+                      <span>Pendapatan Teknisi (Est)</span>
+                      <span className="text-emerald-600">{formatPrice(task.total * 0.8)}</span> {/* Demo: tech gets 80% */}
                     </div>
                   </div>
 
                   {/* Action Buttons based on Status */}
                   <div className="flex items-center gap-2 pt-2">
-                    {/* Maps navigation button */}
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${task.location_lat},${task.location_lng}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 text-center py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
-                    >
-                      <Navigation className="h-3.5 w-3.5" /> Navigasi
-                    </a>
-
-                    {/* Chat button */}
-                    <Link
-                      href={`/teknisi/chat/${task.id}`}
-                      className="flex-1 text-center py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
-                    >
-                      <MessageSquare className="h-3.5 w-3.5" /> Chat
-                    </Link>
-
-                    {/* Action button to change job status */}
-                    {['dikonfirmasi', 'berangkat', 'diproses'].includes(task.status) && (
+                    {task.status === 'menunggu_teknisi' && !task.teknisi_id ? (
                       <Button
-                        onClick={() => handleUpdateTaskStatus(task.id, task.status)}
-                        className="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl py-5"
+                        onClick={() => handleClaimTask(task.id)}
+                        disabled={updatingStatus || !isOnline}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl py-6 flex items-center justify-center gap-2"
                       >
-                        {task.status === 'dikonfirmasi' && 'Mulai Jalan'}
-                        {task.status === 'berangkat' && 'Sampai & Mulai'}
-                        {task.status === 'diproses' && 'Selesaikan'}
+                        {updatingStatus ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Zap className="h-4 w-4" /> Ambil Pekerjaan Ini</>}
                       </Button>
+                    ) : (
+                      <>
+                        {/* Maps navigation button */}
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${task.location_lat},${task.location_lng}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 text-center py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
+                        >
+                          <Navigation className="h-3.5 w-3.5" /> Navigasi
+                        </a>
+
+                        {/* Chat button */}
+                        <Link
+                          href={`/teknisi/chat/${task.id}`}
+                          className="flex-1 text-center py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
+                        >
+                          <MessageSquare className="h-3.5 w-3.5" /> Chat
+                        </Link>
+
+                        {/* Action button to change job status */}
+                        {['dikonfirmasi', 'berangkat', 'diproses'].includes(task.status) && (
+                          <Button
+                            onClick={() => handleUpdateTaskStatus(task.id, task.status)}
+                            className="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl py-5"
+                          >
+                            {task.status === 'dikonfirmasi' && 'Mulai Jalan'}
+                            {task.status === 'berangkat' && 'Sampai & Mulai'}
+                            {task.status === 'diproses' && 'Selesaikan'}
+                          </Button>
+                        )}
+                      </>
                     )}
                   </div>
                 </CardContent>
