@@ -12,12 +12,12 @@ import { id } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 
 const STATUS_COLOR: Record<string, string> = {
-  menunggu: 'bg-amber-100 text-amber-800 border-amber-200',
-  dikonfirmasi: 'bg-blue-100 text-blue-800 border-blue-200',
-  berangkat: 'bg-indigo-100 text-indigo-800 border-indigo-200',
-  diproses: 'bg-purple-100 text-purple-800 border-purple-200',
-  selesai: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-  dibatalkan: 'bg-rose-100 text-rose-800 border-rose-200',
+  menunggu: 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950/50 dark:text-amber-400 dark:border-amber-900/50',
+  dikonfirmasi: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-950/50 dark:text-blue-400 dark:border-blue-900/50',
+  berangkat: 'bg-indigo-100 text-indigo-800 border-indigo-200 dark:bg-indigo-950/50 dark:text-indigo-400 dark:border-indigo-900/50',
+  diproses: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-950/50 dark:text-purple-400 dark:border-purple-900/50',
+  selesai: 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-400 dark:border-emerald-900/50',
+  dibatalkan: 'bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-950/50 dark:text-rose-400 dark:border-rose-900/50',
 }
 
 export default function ServiceHistoryPage() {
@@ -63,9 +63,9 @@ export default function ServiceHistoryPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-900" />
-        <span className="text-sm text-slate-500 font-medium mt-2">Memuat riwayat servis...</span>
+      <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-900 dark:text-blue-500" />
+        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-2">Memuat riwayat servis...</span>
       </div>
     )
   }
@@ -81,51 +81,51 @@ export default function ServiceHistoryPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl pb-24">
       <div className="space-y-2 mb-6">
-        <h1 className="text-2xl font-extrabold font-heading text-slate-800">
+        <h1 className="text-2xl font-extrabold font-heading text-slate-800 dark:text-slate-100">
           Riwayat Servis
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Daftar seluruh pesanan perbaikan laptop Anda
         </p>
       </div>
 
       <div className="space-y-4">
         {orders.length === 0 ? (
-          <div className="text-center py-16 bg-white border border-slate-100 rounded-2xl p-6 text-slate-500 space-y-3">
-            <History className="h-8 w-8 text-slate-350 mx-auto" />
+          <div className="text-center py-16 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 text-slate-500 dark:text-slate-400 space-y-3">
+            <History className="h-8 w-8 text-slate-350 dark:text-slate-600 mx-auto" />
             <div className="text-sm font-medium">Belum ada riwayat pesanan</div>
-            <p className="text-xs text-slate-400 max-w-xs mx-auto">
+            <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mx-auto">
               Semua order perbaikan laptop yang Anda buat akan tercatat di sini.
             </p>
           </div>
         ) : (
           orders.map((order) => {
             const dateStr = format(new Date(order.created_at), 'dd MMM yyyy, HH:mm', { locale: id })
-            const colorClass = STATUS_COLOR[order.status] || 'bg-slate-100 text-slate-800'
+            const colorClass = STATUS_COLOR[order.status] || 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300'
             return (
               <Link href={`/orders/${order.id}`} key={order.id}>
-                <Card className="border-slate-100 hover:border-blue-100 hover:shadow-sm transition-all rounded-2xl bg-white cursor-pointer group">
+                <Card className="border-slate-100 dark:border-slate-800 hover:border-blue-100 dark:hover:border-blue-900 hover:shadow-sm transition-all rounded-2xl bg-white dark:bg-slate-900 cursor-pointer group">
                   <CardContent className="p-5 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-xl bg-slate-50 border border-slate-100 text-slate-600 flex items-center justify-center shadow-sm shrink-0">
+                      <div className="h-12 w-12 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center shadow-sm shrink-0">
                         <Laptop className="h-5 w-5" />
                       </div>
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-800 text-sm font-heading">{order.device_name}</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-200 text-sm font-heading">{order.device_name}</span>
                           <Badge className={cn('px-2 py-0.5 rounded-full text-[9px] font-bold border capitalize shrink-0', colorClass)}>
                             {order.status}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                           <Calendar className="h-3.5 w-3.5" />
                           <span>{dateStr}</span>
                           <span>•</span>
-                          <span className="font-semibold text-blue-900">{formatPrice(order.total)}</span>
+                          <span className="font-semibold text-blue-900 dark:text-blue-400">{formatPrice(order.total)}</span>
                         </div>
                       </div>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-slate-700 transition-colors" />
+                    <ChevronRight className="h-5 w-5 text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors" />
                   </CardContent>
                 </Card>
               </Link>
