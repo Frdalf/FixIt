@@ -96,8 +96,8 @@ export async function updateSession(request: NextRequest) {
       // Inactive Technician check
       if (profile.role === 'teknisi' && !profile.is_active) {
         if (path.startsWith('/teknisi') && path !== '/teknisi/login' && path !== '/teknisi/register') {
-          url.pathname = '/'
-          url.searchParams.set('message', 'waiting_verification')
+          url.pathname = '/teknisi/login'
+          url.searchParams.set('error', 'inactive')
           return NextResponse.redirect(url)
         }
       }
@@ -119,8 +119,14 @@ export async function updateSession(request: NextRequest) {
           url.pathname = '/admin'
         } else if (profile.role === 'teknisi') {
           if (!profile.is_active) {
-            url.pathname = '/'
-            url.searchParams.set('message', 'waiting_verification')
+            // If they somehow get here with an active session but are inactive,
+            // let them stay on the login page so they can be signed out by the client
+            if (path === '/teknisi/login') {
+              return response
+            } else {
+              url.pathname = '/teknisi/login'
+              url.searchParams.set('error', 'inactive')
+            }
           } else {
             url.pathname = '/teknisi/tasks'
           }

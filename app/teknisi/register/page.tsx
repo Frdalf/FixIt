@@ -76,10 +76,11 @@ export default function TeknisiRegisterPage() {
     }
 
     if (data.user) {
+      await supabase.auth.signOut()
       toast.success(
         'Registrasi berhasil! Akun Anda dinonaktifkan sementara untuk diverifikasi Admin.'
       )
-      router.push('/?message=waiting_verification')
+      router.push('/teknisi/login?error=inactive')
     }
   }
 
