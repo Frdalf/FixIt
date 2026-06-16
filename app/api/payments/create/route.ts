@@ -19,6 +19,7 @@ export async function POST(request: Request) {
       adminFee,
       total,
       pelangganId,
+      teknisiId,
     } = body
 
     const supabase = createClient()
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
       .insert({
         order_code: orderCode,
         pelanggan_id: pelangganId,
+        teknisi_id: teknisiId,
         status: 'menunggu',
         device_name: deviceName,
         device_type: deviceType,

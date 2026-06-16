@@ -12,6 +12,7 @@ interface CheckoutState {
   locationPhoto: string | null
   orderNotes: string
   adminFee: number
+  teknisiId: string | null
   
   // Actions
   addService: (service: Service) => void
@@ -21,6 +22,7 @@ interface CheckoutState {
   setDevice: (name: string, type: 'laptop' | 'pc') => void
   setLocation: (address: string, lat: number | null, lng: number | null, notes?: string, photo?: string | null) => void
   setOrderNotes: (notes: string) => void
+  setTeknisiId: (id: string | null) => void
   
   // Getters
   getSubtotal: () => number
@@ -38,6 +40,7 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
   locationPhoto: null,
   orderNotes: '',
   adminFee: 10000,
+  teknisiId: null,
 
   addService: (service) => {
     const { selectedServices } = get()
@@ -72,6 +75,7 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
       locationNotes: '',
       locationPhoto: null,
       orderNotes: '',
+      teknisiId: null,
     })
   },
 
@@ -91,6 +95,10 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
 
   setOrderNotes: (notes) => {
     set({ orderNotes: notes })
+  },
+
+  setTeknisiId: (id) => {
+    set({ teknisiId: id })
   },
 
   getSubtotal: () => {

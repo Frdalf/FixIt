@@ -35,6 +35,7 @@ export default function PaymentPage() {
   const getSubtotal = useCheckoutStore((state) => state.getSubtotal)
   const getTotal = useCheckoutStore((state) => state.getTotal)
   const clearCart = useCheckoutStore((state) => state.clearCart)
+  const teknisiId = useCheckoutStore((state) => state.teknisiId)
 
   // Form State
   const [paymentMethod, setPaymentMethod] = useState<'qris' | 'virtual_account'>('qris')
@@ -108,6 +109,7 @@ export default function PaymentPage() {
           adminFee,
           total: getTotal(),
           pelangganId: user.id,
+          teknisiId,
         }),
       })
 

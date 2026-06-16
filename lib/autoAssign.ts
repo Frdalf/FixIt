@@ -18,6 +18,89 @@ export async function autoAssignTechnician(supabase: SupabaseClient, orderId: st
       return { success: false, message: `Order not found: ${orderError?.message}` }
     }
 
+    // If a technician is already assigned (e.g. manually selected by customer), just confirm them
+    if (order.teknisi_id) {
+      // Get technician info
+      const { data: tech } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', order.teknisi_id)
+        .single()
+
+      const techName = tech?.full_name || 'Teknisi'
+
+      // Update Order status
+      const { error: updateOrderError } = await supabase
+        .from('orders')
+        .update({
+          status: 'dikonfirmasi',
+          scheduled_at: new Date().toISOString(),
+        })
+        .eq('id', orderId)
+
+      if (updateOrderError) {
+        return { success: false, message: `Failed to update order assignment: ${updateOrderError.message}` }
+      }
+
+      // Update technician availability status to bertugas
+      await supabase
+        .from('teknisi_profiles')
+        .update({
+          status: 'bertugas',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', order.teknisi_id)
+
+      // Create Notifications
+      await supabase.from('notifications').insert({
+        user_id: order.pelanggan_id,
+        title: 'Teknisi Dialokasikan',
+        body: `Teknisi ${techName} telah mengkonfirmasi dan siap meluncur ke lokasi Anda.`,
+        type: 'order',
+        related_id: orderId,
+      })
+
+      await supabase.from('notifications').insert({
+        user_id: order.teknisi_id,
+        title: 'Tugas Baru Diterima',
+        body: `Anda mendapatkan order perbaikan ${order.device_name} untuk ${order.location_address}.`,
+        type: 'order',
+        related_id: orderId,
+      })
+
+      // Initialize chat session automatically if not exists
+      const { data: existingChat } = await supabase
+        .from('chats')
+        .select('id')
+        .eq('order_id', orderId)
+        .maybeSingle()
+
+      let chatId = existingChat?.id
+
+      if (!chatId) {
+        const { data: newChat } = await supabase
+          .from('chats')
+          .insert({ order_id: orderId })
+          .select()
+          .single()
+        chatId = newChat?.id
+      }
+
+      if (chatId) {
+        await supabase.from('messages').insert({
+          chat_id: chatId,
+          content: `Halo, saya teknisi ${techName} yang bertugas melayani perbaikan Anda. Saya akan segera menuju lokasi Anda.`,
+          sender_id: order.teknisi_id
+        })
+      }
+
+      return {
+        success: true,
+        message: `Successfully confirmed pre-selected technician ${techName}`,
+        assignedTechnicianId: order.teknisi_id,
+      }
+    }
+
     // Determine specializations needed (e.g. ['hardware', 'software', 'cleaning', 'estetika'])
     // We can infer this from the services in the order.
     // Since we know categories map to 'hardware', 'software', 'cleaning', 'estetika':
@@ -145,6 +228,7 @@ export async function autoAssignTechnician(supabase: SupabaseClient, orderId: st
       await supabase.from('messages').insert({
         chat_id: chat.id,
         content: `Halo, saya teknisi ${nearestTech.name} yang bertugas melayani perbaikan laptop Anda. Saya akan segera menuju lokasi Anda.`,
+        sender_id: nearestTech.id
       })
     }
 

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ChevronLeft, Laptop, AlertTriangle, MapPin, Keyboard } from 'lucide-react'
+import { ChevronLeft, Laptop, AlertTriangle, MapPin, Keyboard, Users, Star, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 // Dynamically import MapPicker with SSR disabled to prevent Leaflet errors
@@ -31,6 +31,7 @@ export default function NewOrderPage() {
   const setDevice = useCheckoutStore((state) => state.setDevice)
   const setLocation = useCheckoutStore((state) => state.setLocation)
   const setOrderNotes = useCheckoutStore((state) => state.setOrderNotes)
+  const setTeknisiId = useCheckoutStore((state) => state.setTeknisiId)
 
   // Form Local State
   const [deviceName, setDeviceNameState] = useState('')
@@ -41,6 +42,11 @@ export default function NewOrderPage() {
   const [locationNotes, setLocationNotesState] = useState('')
   const [notes, setNotesState] = useState('')
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
+
+  // Technicians State
+  const [nearbyTechnicians, setNearbyTechnicians] = useState<any[]>([])
+  const [loadingTechnicians, setLoadingTechnicians] = useState(false)
+  const [selectedTeknisiId, setSelectedTeknisiId] = useState<string | null>(null)
 
   // Redirect if no services are selected
   useEffect(() => {
@@ -53,8 +59,52 @@ export default function NewOrderPage() {
   useEffect(() => {
     const isDeviceNameValid = deviceName.trim().length > 2
     const isLocationValid = locationAddress.trim().length > 5 && locationLat !== null && locationLng !== null
-    setIsSubmitDisabled(!(isDeviceNameValid && isLocationValid))
-  }, [deviceName, locationAddress, locationLat, locationLng])
+    const isTeknisiSelected = selectedTeknisiId !== null
+    setIsSubmitDisabled(!(isDeviceNameValid && isLocationValid && isTeknisiSelected))
+  }, [deviceName, locationAddress, locationLat, locationLng, selectedTeknisiId])
+
+  // Fetch Technicians when location is set
+  useEffect(() => {
+    const fetchTechnicians = async () => {
+      if (locationLat === null || locationLng === null || selectedServices.length === 0) {
+        setNearbyTechnicians([])
+        setSelectedTeknisiId(null)
+        return
+      }
+
+      setLoadingTechnicians(true)
+      try {
+        const res = await fetch('/api/technicians/nearby', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            lat: locationLat,
+            lng: locationLng,
+            services: selectedServices,
+          }),
+        })
+        const data = await res.json()
+        if (res.ok) {
+          setNearbyTechnicians(data.technicians || [])
+          // Reset selection if the previously selected tech is not in the new list
+          if (selectedTeknisiId && !(data.technicians || []).some((t: any) => t.id === selectedTeknisiId)) {
+            setSelectedTeknisiId(null)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch nearby technicians', err)
+      } finally {
+        setLoadingTechnicians(false)
+      }
+    }
+
+    // Debounce to prevent multiple API calls while user is dragging pin
+    const timer = setTimeout(() => {
+      fetchTechnicians()
+    }, 800)
+
+    return () => clearTimeout(timer)
+  }, [locationLat, locationLng, selectedServices])
 
   const handleMapChange = (lat: number, lng: number, address: string) => {
     setLocationLatState(lat)
@@ -70,6 +120,7 @@ export default function NewOrderPage() {
     setDevice(deviceName, deviceType)
     setLocation(locationAddress, locationLat, locationLng, locationNotes)
     setOrderNotes(notes)
+    setTeknisiId(selectedTeknisiId)
 
     // Route to payment page
     router.push('/orders/new/payment')
@@ -217,6 +268,85 @@ export default function NewOrderPage() {
           </CardContent>
         </Card>
 
+        {/* Technician Selection */}
+        {locationLat !== null && locationLng !== null && (
+          <Card className="border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+            <CardHeader className="pb-3 border-b border-slate-50 bg-amber-50/30">
+              <CardTitle className="text-base font-bold font-heading text-slate-800 flex items-center gap-2">
+                <Users className="h-4.5 w-4.5 text-amber-500" />
+                Pilih Teknisi Terdekat
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-4 p-0">
+              {loadingTechnicians ? (
+                <div className="flex flex-col items-center justify-center p-8 text-slate-400">
+                  <Loader2 className="h-6 w-6 animate-spin mb-2" />
+                  <span className="text-sm">Mencari teknisi di sekitar Anda...</span>
+                </div>
+              ) : nearbyTechnicians.length === 0 ? (
+                <div className="text-center p-8 text-slate-500 text-sm">
+                  Tidak ada teknisi yang tersedia di sekitar Anda saat ini.
+                </div>
+              ) : (
+                <div className="divide-y divide-slate-100 max-h-[300px] overflow-y-auto">
+                  {nearbyTechnicians.map((tech) => (
+                    <div
+                      key={tech.id}
+                      onClick={() => setSelectedTeknisiId(tech.id)}
+                      className={cn(
+                        'p-4 flex items-center gap-4 cursor-pointer transition-colors',
+                        selectedTeknisiId === tech.id
+                          ? 'bg-blue-50/50'
+                          : 'hover:bg-slate-50'
+                      )}
+                    >
+                      {/* Selection Radio Circle */}
+                      <div className="shrink-0 flex items-center justify-center">
+                        <div
+                          className={cn(
+                            'w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors',
+                            selectedTeknisiId === tech.id
+                              ? 'border-blue-600'
+                              : 'border-slate-300'
+                          )}
+                        >
+                          {selectedTeknisiId === tech.id && (
+                            <div className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-in zoom-in-50 duration-200" />
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Technician Avatar */}
+                      <div className="w-10 h-10 rounded-full bg-slate-100 shrink-0 flex items-center justify-center font-bold text-slate-400 overflow-hidden text-sm uppercase">
+                        {tech.avatar_url ? (
+                          <img src={tech.avatar_url} alt={tech.name} className="w-full h-full object-cover" />
+                        ) : (
+                          tech.name.slice(0, 2)
+                        )}
+                      </div>
+
+                      {/* Technician Info */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-slate-800 text-sm truncate">{tech.name}</h4>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5 text-xs text-slate-500">
+                          <span className="flex items-center gap-1 font-medium text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
+                            <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
+                            {tech.rating_avg} ({tech.total_jobs} tugas)
+                          </span>
+                          <span className="flex items-center gap-1 text-slate-500">
+                            <MapPin className="h-3 w-3" />
+                            {tech.distance.toFixed(1)} km
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Selected Services Summary */}
         <Card className="border-slate-100 rounded-2xl shadow-sm bg-blue-50/10">
           <CardHeader className="pb-3 border-b border-slate-50">
@@ -251,7 +381,7 @@ export default function NewOrderPage() {
           {isSubmitDisabled && (
             <div className="bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-xl flex items-center gap-2 text-xs">
               <AlertTriangle className="h-4 w-4 shrink-0" />
-              <span>Harap isi nama perangkat dan geser pin di peta untuk memverifikasi lokasi.</span>
+              <span>Harap lengkapi detail perangkat, tetapkan lokasi peta, dan pilih teknisi.</span>
             </div>
           )}
         </div>
