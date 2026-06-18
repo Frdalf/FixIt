@@ -232,7 +232,7 @@ export default function TeknisiTasksPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl pb-24">
       {/* Availability Header Bar */}
-      <Card className="border-slate-100 rounded-2xl bg-white shadow-sm mb-6">
+      <Card className="border-slate-100 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 shadow-sm mb-6">
         <CardContent className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
@@ -243,7 +243,7 @@ export default function TeknisiTasksPage() {
             />
             <div>
               <div className="text-xs text-slate-500 font-medium">Status Pekerjaan</div>
-              <div className="text-sm font-bold text-slate-800 font-heading">
+              <div className="text-sm font-bold text-slate-800 dark:text-slate-100 font-heading">
                 {isOnline ? 'Menerima Order (Online)' : 'Sedang Istirahat (Offline)'}
               </div>
             </div>
@@ -265,18 +265,18 @@ export default function TeknisiTasksPage() {
 
       {/* Page Title & Tab Filters */}
       <div className="space-y-4 mb-6">
-        <h1 className="text-2xl font-extrabold font-heading text-slate-800">
+        <h1 className="text-2xl font-extrabold font-heading text-slate-800 dark:text-slate-100">
           Daftar Pekerjaan
         </h1>
 
-        <div className="flex border-b border-slate-200">
+        <div className="flex border-b border-slate-200 dark:border-slate-800">
           <button
             onClick={() => setActiveTab('active')}
             className={cn(
               'flex-1 text-center pb-3 text-sm font-bold border-b-2 transition-all',
               activeTab === 'active'
-                ? 'border-blue-900 text-blue-900 font-extrabold'
-                : 'border-transparent text-slate-450 hover:text-slate-700'
+                ? 'border-blue-900 dark:border-blue-500 text-blue-900 dark:text-blue-400 font-extrabold'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             )}
           >
             Aktif ({tasks.filter((t) => ['menunggu', 'dikonfirmasi', 'berangkat', 'diproses'].includes(t.status)).length})
@@ -286,8 +286,8 @@ export default function TeknisiTasksPage() {
             className={cn(
               'flex-1 text-center pb-3 text-sm font-bold border-b-2 transition-all',
               activeTab === 'completed'
-                ? 'border-blue-900 text-blue-900 font-extrabold'
-                : 'border-transparent text-slate-450 hover:text-slate-700'
+                ? 'border-blue-900 dark:border-blue-500 text-blue-900 dark:text-blue-400 font-extrabold'
+                : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
             )}
           >
             Riwayat Selesai ({tasks.filter((t) => ['selesai', 'dibatalkan'].includes(t.status)).length})
@@ -298,7 +298,7 @@ export default function TeknisiTasksPage() {
       {/* Task List */}
       <div className="space-y-4">
         {filteredTasks.length === 0 ? (
-          <div className="text-center py-16 bg-white border border-slate-100 rounded-2xl p-6 text-slate-500 space-y-3">
+          <div className="text-center py-16 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 text-slate-500 dark:text-slate-400 space-y-3">
             <AlertCircle className="h-8 w-8 text-slate-350 mx-auto" />
             <div className="text-sm font-medium">Tidak ada pekerjaan {activeTab === 'active' ? 'aktif' : 'selesai'}</div>
           </div>
@@ -306,7 +306,7 @@ export default function TeknisiTasksPage() {
           filteredTasks.map((task) => {
             const meta = STATUS_METADATA[task.status] || { label: task.status, color: 'bg-slate-100 text-slate-800' }
             return (
-              <Card key={task.id} className="border-slate-100 hover:shadow-sm transition-all rounded-2xl bg-white overflow-hidden">
+              <Card key={task.id} className="border-slate-100 dark:border-slate-800 hover:shadow-sm transition-all rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
                 <CardContent className="p-5 space-y-4">
                   {/* Top Bar */}
                   <div className="flex justify-between items-center">
@@ -318,12 +318,12 @@ export default function TeknisiTasksPage() {
 
                   {/* Device and Customer Info */}
                   <div className="space-y-2">
-                    <h3 className="font-bold text-slate-800 text-base font-heading flex items-center gap-2 uppercase">
-                      <Laptop className="h-4.5 w-4.5 text-blue-900" />
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base font-heading flex items-center gap-2 uppercase">
+                      <Laptop className="h-4.5 w-4.5 text-blue-900 dark:text-blue-400" />
                       {task.device_name}
                     </h3>
 
-                    <div className="flex items-start gap-2 text-xs text-slate-600">
+                    <div className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
                       <MapPin className="h-4 w-4 text-slate-400 shrink-0 mt-0.5" />
                       <p className="leading-relaxed">{task.location_address}</p>
                     </div>
@@ -336,14 +336,14 @@ export default function TeknisiTasksPage() {
                   </div>
 
                   {/* Order Items Snapshot */}
-                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1.5">
+                  <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1.5">
                     <div className="text-[10px] text-slate-500 uppercase tracking-wider font-bold">Layanan Perbaikan:</div>
                     {task.order_items?.map((item: any, idx: number) => (
-                      <div key={idx} className="text-xs font-semibold text-slate-700">
+                      <div key={idx} className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                         • {item.service_name}
                       </div>
                     ))}
-                    <div className="border-t border-slate-200/50 pt-2 mt-2 flex justify-between items-center text-xs font-bold text-blue-900">
+                    <div className="border-t border-slate-200/50 dark:border-slate-800 pt-2 mt-2 flex justify-between items-center text-xs font-bold text-blue-900 dark:text-blue-400">
                       <span>Total Invoice</span>
                       <span>{formatPrice(task.total)}</span>
                     </div>
@@ -356,7 +356,7 @@ export default function TeknisiTasksPage() {
                       href={`https://www.google.com/maps/search/?api=1&query=${task.location_lat},${task.location_lng}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 text-center py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
+                      className="flex-1 text-center py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
                     >
                       <Navigation className="h-3.5 w-3.5" /> Navigasi
                     </a>
@@ -364,7 +364,7 @@ export default function TeknisiTasksPage() {
                     {/* Chat button */}
                     <Link
                       href={`/teknisi/chat/${task.id}`}
-                      className="flex-1 text-center py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
+                      className="flex-1 text-center py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
                     >
                       <MessageSquare className="h-3.5 w-3.5" /> Chat
                     </Link>
