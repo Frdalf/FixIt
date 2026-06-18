@@ -139,27 +139,27 @@ export default function NewOrderPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl pb-24">
       <div className="flex items-center gap-2 mb-6">
-        <Link href="/repairs" className="text-slate-500 hover:text-slate-800 transition-colors">
+        <Link href="/repairs" className="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
           <ChevronLeft className="h-5 w-5" />
         </Link>
-        <span className="text-sm text-slate-500 font-medium">Batal & Kembali</span>
+        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Batal & Kembali</span>
       </div>
 
       <div className="space-y-2 mb-6">
-        <h1 className="text-2xl font-extrabold font-heading text-slate-800">
+        <h1 className="text-2xl font-extrabold font-heading text-slate-800 dark:text-slate-100">
           Detail Pengiriman & Layanan
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Lengkapi informasi perangkat dan koordinat lokasi pertemuan servis
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Device Information */}
-        <Card className="border-slate-100 rounded-2xl shadow-sm">
-          <CardHeader className="pb-3 border-b border-slate-50">
-            <CardTitle className="text-base font-bold font-heading text-slate-800 flex items-center gap-2">
-              <Laptop className="h-4.5 w-4.5 text-blue-900" />
+        <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl shadow-sm">
+          <CardHeader className="pb-3 border-b border-slate-50 dark:border-slate-800/50">
+            <CardTitle className="text-base font-bold font-heading text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <Laptop className="h-4.5 w-4.5 text-blue-900 dark:text-blue-400" />
               Detail Perangkat Laptop / PC
             </CardTitle>
           </CardHeader>
@@ -172,7 +172,7 @@ export default function NewOrderPage() {
                 value={deviceName}
                 onChange={(e) => setDeviceNameState(e.target.value)}
                 required
-                className="rounded-xl border-slate-200"
+                className="rounded-xl border-slate-200 dark:border-slate-700 bg-transparent dark:bg-slate-950 dark:text-slate-100"
               />
             </div>
             
@@ -185,8 +185,8 @@ export default function NewOrderPage() {
                   className={cn(
                     'py-3.5 border rounded-xl font-semibold text-sm transition-all text-center',
                     deviceType === 'laptop'
-                      ? 'border-blue-500 bg-blue-50/20 text-blue-900 ring-1 ring-blue-500'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'border-blue-500 bg-blue-50/20 dark:bg-blue-900/20 text-blue-900 dark:text-blue-400 ring-1 ring-blue-500'
+                      : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                   )}
                 >
                   Laptop
@@ -197,8 +197,8 @@ export default function NewOrderPage() {
                   className={cn(
                     'py-3.5 border rounded-xl font-semibold text-sm transition-all text-center',
                     deviceType === 'pc'
-                      ? 'border-blue-500 bg-blue-50/20 text-blue-900 ring-1 ring-blue-500'
-                      : 'border-slate-200 text-slate-600 hover:bg-slate-50'
+                      ? 'border-blue-500 bg-blue-50/20 dark:bg-blue-900/20 text-blue-900 dark:text-blue-400 ring-1 ring-blue-500'
+                      : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50'
                   )}
                 >
                   PC / Desktop
@@ -209,10 +209,10 @@ export default function NewOrderPage() {
         </Card>
 
         {/* Location Information */}
-        <Card className="border-slate-100 rounded-2xl shadow-sm">
-          <CardHeader className="pb-3 border-b border-slate-50">
-            <CardTitle className="text-base font-bold font-heading text-slate-800 flex items-center gap-2">
-              <MapPin className="h-4.5 w-4.5 text-blue-900" />
+        <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl shadow-sm">
+          <CardHeader className="pb-3 border-b border-slate-50 dark:border-slate-800/50">
+            <CardTitle className="text-base font-bold font-heading text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <MapPin className="h-4.5 w-4.5 text-blue-900 dark:text-blue-400" />
               Titik Lokasi Pertemuan
             </CardTitle>
           </CardHeader>
@@ -230,7 +230,7 @@ export default function NewOrderPage() {
                 value={locationAddress}
                 onChange={(e) => setLocationAddressState(e.target.value)}
                 required
-                className="w-full text-sm border border-slate-200 rounded-xl p-3 focus:outline-blue-500 focus:ring-1 focus:ring-blue-500 resize-none bg-slate-50"
+                className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-blue-500 focus:ring-1 focus:ring-blue-500 resize-none bg-slate-50 dark:bg-slate-950 dark:text-slate-100"
                 placeholder="Geser pin pada peta untuk melacak alamat..."
               />
             </div>
@@ -242,17 +242,17 @@ export default function NewOrderPage() {
                 placeholder="Contoh: Pagar hitam, rumah tingkat 2, dekat masjid"
                 value={locationNotes}
                 onChange={(e) => setLocationNotesState(e.target.value)}
-                className="rounded-xl border-slate-200"
+                className="rounded-xl border-slate-200 dark:border-slate-700 bg-transparent dark:bg-slate-950 dark:text-slate-100"
               />
             </div>
           </CardContent>
         </Card>
 
         {/* Diagnostic Notes */}
-        <Card className="border-slate-100 rounded-2xl shadow-sm">
-          <CardHeader className="pb-3 border-b border-slate-50">
-            <CardTitle className="text-base font-bold font-heading text-slate-800 flex items-center gap-2">
-              <Keyboard className="h-4.5 w-4.5 text-blue-900" />
+        <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl shadow-sm">
+          <CardHeader className="pb-3 border-b border-slate-50 dark:border-slate-800/50">
+            <CardTitle className="text-base font-bold font-heading text-slate-800 dark:text-slate-100 flex items-center gap-2">
+              <Keyboard className="h-4.5 w-4.5 text-blue-900 dark:text-blue-400" />
               Catatan Kerusakan Laptop (Opsional)
             </CardTitle>
           </CardHeader>
@@ -262,7 +262,7 @@ export default function NewOrderPage() {
               rows={3}
               value={notes}
               onChange={(e) => setNotesState(e.target.value)}
-              className="w-full text-sm border border-slate-200 rounded-xl p-3 focus:outline-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
+              className="w-full text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-blue-500 focus:ring-1 focus:ring-blue-500 resize-none bg-transparent dark:bg-slate-950 dark:text-slate-100"
               placeholder="Jelaskan detail keluhan atau gejala kerusakan laptop Anda agar teknisi dapat mempersiapkan alat kerja..."
             />
           </CardContent>
@@ -270,9 +270,9 @@ export default function NewOrderPage() {
 
         {/* Technician Selection */}
         {locationLat !== null && locationLng !== null && (
-          <Card className="border-slate-100 rounded-2xl shadow-sm overflow-hidden">
-            <CardHeader className="pb-3 border-b border-slate-50 bg-amber-50/30">
-              <CardTitle className="text-base font-bold font-heading text-slate-800 flex items-center gap-2">
+          <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl shadow-sm overflow-hidden">
+            <CardHeader className="pb-3 border-b border-slate-50 dark:border-slate-800/50 bg-amber-50/30 dark:bg-amber-950/20">
+              <CardTitle className="text-base font-bold font-heading text-slate-800 dark:text-slate-100 flex items-center gap-2">
                 <Users className="h-4.5 w-4.5 text-amber-500" />
                 Pilih Teknisi Terdekat
               </CardTitle>
@@ -288,7 +288,7 @@ export default function NewOrderPage() {
                   Tidak ada teknisi yang tersedia di sekitar Anda saat ini.
                 </div>
               ) : (
-                <div className="divide-y divide-slate-100 max-h-[300px] overflow-y-auto">
+                <div className="divide-y divide-slate-100 dark:divide-slate-800/50 max-h-[300px] overflow-y-auto">
                   {nearbyTechnicians.map((tech) => (
                     <div
                       key={tech.id}
@@ -296,8 +296,8 @@ export default function NewOrderPage() {
                       className={cn(
                         'p-4 flex items-center gap-4 cursor-pointer transition-colors',
                         selectedTeknisiId === tech.id
-                          ? 'bg-blue-50/50'
-                          : 'hover:bg-slate-50'
+                          ? 'bg-blue-50/50 dark:bg-blue-900/20'
+                          : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
                       )}
                     >
                       {/* Selection Radio Circle */}
@@ -307,7 +307,7 @@ export default function NewOrderPage() {
                             'w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors',
                             selectedTeknisiId === tech.id
                               ? 'border-blue-600'
-                              : 'border-slate-300'
+                              : 'border-slate-300 dark:border-slate-600'
                           )}
                         >
                           {selectedTeknisiId === tech.id && (
@@ -317,7 +317,7 @@ export default function NewOrderPage() {
                       </div>
 
                       {/* Technician Avatar */}
-                      <div className="w-10 h-10 rounded-full bg-slate-100 shrink-0 flex items-center justify-center font-bold text-slate-400 overflow-hidden text-sm uppercase">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 shrink-0 flex items-center justify-center font-bold text-slate-400 dark:text-slate-500 overflow-hidden text-sm uppercase">
                         {tech.avatar_url ? (
                           <img src={tech.avatar_url} alt={tech.name} className="w-full h-full object-cover" />
                         ) : (
@@ -327,13 +327,13 @@ export default function NewOrderPage() {
 
                       {/* Technician Info */}
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-slate-800 text-sm truncate">{tech.name}</h4>
-                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5 text-xs text-slate-500">
-                          <span className="flex items-center gap-1 font-medium text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">
+                        <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm truncate">{tech.name}</h4>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                          <span className="flex items-center gap-1 font-medium text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-950/30 px-1.5 py-0.5 rounded">
                             <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
                             {tech.rating_avg} ({tech.total_jobs} tugas)
                           </span>
-                          <span className="flex items-center gap-1 text-slate-500">
+                          <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
                             <MapPin className="h-3 w-3" />
                             {tech.distance.toFixed(1)} km
                           </span>
@@ -348,20 +348,20 @@ export default function NewOrderPage() {
         )}
 
         {/* Selected Services Summary */}
-        <Card className="border-slate-100 rounded-2xl shadow-sm bg-blue-50/10">
-          <CardHeader className="pb-3 border-b border-slate-50">
-            <CardTitle className="text-base font-bold font-heading text-slate-800">
+        <Card className="border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm bg-blue-50/10 dark:bg-blue-950/10">
+          <CardHeader className="pb-3 border-b border-slate-50 dark:border-slate-800/50">
+            <CardTitle className="text-base font-bold font-heading text-slate-800 dark:text-slate-100">
               Layanan yang Dipesan
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4 space-y-2">
             {selectedServices.map((svc) => (
               <div key={svc.id} className="flex justify-between items-center text-sm">
-                <span className="text-slate-600">{svc.name}</span>
-                <span className="font-semibold text-slate-850">{formatPrice(svc.price_min)}</span>
+                <span className="text-slate-600 dark:text-slate-300">{svc.name}</span>
+                <span className="font-semibold text-slate-800 dark:text-slate-200">{formatPrice(svc.price_min)}</span>
               </div>
             ))}
-            <div className="border-t border-slate-100 pt-3 flex justify-between items-center text-base font-bold text-blue-900 font-heading">
+            <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex justify-between items-center text-base font-bold text-blue-900 dark:text-blue-400 font-heading">
               <span>Estimasi Subtotal</span>
               <span>{formatPrice(getSubtotal())}</span>
             </div>
@@ -379,7 +379,7 @@ export default function NewOrderPage() {
           </Button>
 
           {isSubmitDisabled && (
-            <div className="bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-xl flex items-center gap-2 text-xs">
+            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 text-amber-800 dark:text-amber-400 p-3 rounded-xl flex items-center gap-2 text-xs">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>Harap lengkapi detail perangkat, tetapkan lokasi peta, dan pilih teknisi.</span>
             </div>
