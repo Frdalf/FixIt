@@ -291,6 +291,52 @@ create policy "Chat participants can send messages" on public.messages for inser
   )
 );
 
+-- ==========================================
+-- Report Messages Table
+-- ==========================================
+create table public.report_messages (
+  id uuid primary key default gen_random_uuid(),
+  report_id uuid references public.customer_reports(id) on delete cascade not null,
+  sender_id uuid references public.profiles(id) on delete cascade not null,
+  content text not null,
+  created_at timestamptz default now()
+);
+
+alter table public.report_messages enable row level security;
+
+create policy "Admins and Report Owners can view report messages" on public.report_messages for select using (
+  exists (select 1 from public.profiles where id = auth.uid() and role = 'admin') or
+  exists (
+    select 1 from public.customer_reports 
+    where customer_reports.id = report_id 
+    and customer_reports.pelanggan_id = auth.uid()
+  )
+);
+
+create policy "Admins and Report Owners can insert report messages" on public.report_messages for insert with check (
+  sender_id = auth.uid() and
+  (
+    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin') or
+    exists (
+      select 1 from public.customer_reports 
+      where customer_reports.id = report_id 
+      and customer_reports.pelanggan_id = auth.uid()
+    )
+  )
+);
+create policy "Chat participants can send messages" on public.messages for insert with check (
+  sender_id = auth.uid() and
+  (
+    exists (
+      select 1 from public.chats 
+      join public.orders on orders.id = chats.order_id
+      where chats.id = chat_id 
+      and (orders.pelanggan_id = auth.uid() or orders.teknisi_id = auth.uid())
+    )
+    or exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+  )
+);
+
 -- Reviews Policies
 create policy "Anyone can read reviews" on public.reviews for select using (true);
 create policy "Customers can write a review for their completed order" on public.reviews for insert with check (
@@ -369,4 +415,5 @@ create or replace trigger on_auth_user_created
 -- ==========================================
 
 alter publication supabase_realtime add table messages;
+alter publication supabase_realtime add table report_messages;
 alter publication supabase_realtime add table orders;

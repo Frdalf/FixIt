@@ -1,6 +1,6 @@
 'use client'
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
+
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -12,20 +12,27 @@ import {
   MessageSquare,
   AlertCircle,
   Loader2,
-  ChevronRight,
   Send,
   User,
-  Laptop
+  Laptop,
+  CheckCircle2
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function AdminReportsPage() {
+  const { user } = useAuth()
   const [reports, setReports] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedReport, setSelectedReport] = useState<any>(null)
   const [replyText, setReplyText] = useState('')
   const [isReplying, setIsReplying] = useState(false)
+  const [isFinishing, setIsFinishing] = useState(false)
+  
+  const [messages, setMessages] = useState<any[]>([])
+  const [loadingMessages, setLoadingMessages] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const fetchReports = async () => {
     try {
@@ -52,69 +59,115 @@ export default function AdminReportsPage() {
     fetchReports()
   }, [])
 
+  // Fetch report messages and setup realtime
+  useEffect(() => {
+    if (!selectedReport) {
+      setMessages([])
+      return
+    }
+
+    const fetchMessages = async () => {
+      setLoadingMessages(true)
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('report_messages')
+        .select('*')
+        .eq('report_id', selectedReport.id)
+        .order('created_at', { ascending: true })
+
+      if (!error && data) {
+        setMessages(data)
+      }
+      setLoadingMessages(false)
+    }
+
+    fetchMessages()
+
+    const supabase = createClient()
+    const channel = supabase
+      .channel(`report_messages_${selectedReport.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'report_messages',
+          filter: `report_id=eq.${selectedReport.id}`,
+        },
+        (payload) => {
+          setMessages((prev) => [...prev, payload.new])
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [selectedReport])
+
+  // Auto scroll to bottom of chat
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
   const handleReply = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!replyText.trim() || !selectedReport) return
+    if (!replyText.trim() || !selectedReport || !user) return
 
     setIsReplying(true)
     try {
       const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Harap login sebagai admin')
-
-      // 1. Ensure chat room exists for this order
-      let chatId = null
-      const { data: existingChat, error: chatError } = await supabase
-        .from('chats')
-        .select('id')
-        .eq('order_id', selectedReport.order_id)
-        .limit(1)
-        .maybeSingle()
-
-      if (chatError) throw chatError
-
-      if (existingChat) {
-        chatId = existingChat.id
-      } else {
-        // Create new chat
-        const { data: newChat, error: newChatErr } = await supabase
-          .from('chats')
-          .insert({ order_id: selectedReport.order_id })
-          .select()
-          .single()
-        
-        if (newChatErr) throw newChatErr
-        chatId = newChat.id
-      }
-
-      // 2. Insert reply message
+      
+      // 1. Insert reply message into report_messages
       const { error: msgErr } = await supabase
-        .from('messages')
+        .from('report_messages')
         .insert({
-          chat_id: chatId,
+          report_id: selectedReport.id,
           sender_id: user.id,
           content: replyText,
         })
       
       if (msgErr) throw msgErr
 
-      // 3. Update report status
-      const { error: updateErr } = await supabase
-        .from('customer_reports')
-        .update({ status: 'replied' })
-        .eq('id', selectedReport.id)
+      // 2. Update report status if it was pending
+      if (selectedReport.status === 'pending') {
+        const { error: updateErr } = await supabase
+          .from('customer_reports')
+          .update({ status: 'diproses' })
+          .eq('id', selectedReport.id)
 
-      if (updateErr) throw updateErr
+        if (!updateErr) {
+          fetchReports()
+          setSelectedReport((prev: any) => ({ ...prev, status: 'diproses' }))
+        }
+      }
 
-      toast.success('Balasan berhasil dikirim ke pelanggan')
       setReplyText('')
-      setSelectedReport(null)
-      fetchReports()
-
     } catch (err: any) {
       toast.error('Gagal mengirim balasan: ' + err.message)
     } finally {
       setIsReplying(false)
+    }
+  }
+
+  const handleSelesai = async () => {
+    if (!selectedReport) return
+    setIsFinishing(true)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('customer_reports')
+        .update({ status: 'selesai' })
+        .eq('id', selectedReport.id)
+
+      if (error) throw error
+      toast.success('Laporan berhasil ditandai sebagai selesai')
+      fetchReports()
+      setSelectedReport((prev: any) => ({ ...prev, status: 'selesai' }))
+    } catch (err: any) {
+      toast.error('Gagal menyelesaikan laporan: ' + err.message)
+    } finally {
+      setIsFinishing(false)
     }
   }
 
@@ -204,7 +257,9 @@ export default function AdminReportsPage() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-slate-500">{report.orders?.order_code}</span>
-                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-emerald-200 text-emerald-600 bg-emerald-50">Selesai</Badge>
+                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 h-4 ${report.status === 'selesai' ? 'border-emerald-200 text-emerald-600 bg-emerald-50' : 'border-blue-200 text-blue-600 bg-blue-50'}`}>
+                        {report.status === 'selesai' ? 'Selesai' : 'Diproses'}
+                      </Badge>
                     </div>
                     <div className="font-bold text-slate-700 dark:text-slate-300 text-xs mt-1 truncate">{report.subject}</div>
                   </button>
@@ -217,12 +272,12 @@ export default function AdminReportsPage() {
         {/* Right Column - Report Detail & Reply */}
         <div className="lg:col-span-2">
           {selectedReport ? (
-            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl shadow-sm h-full flex flex-col">
-              <CardHeader className="border-b border-slate-100 dark:border-slate-800">
+            <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl shadow-sm h-full flex flex-col max-h-[700px]">
+              <CardHeader className="border-b border-slate-100 dark:border-slate-800 shrink-0">
                 <div className="flex items-start justify-between">
                   <div>
-                    <Badge variant={selectedReport.status === 'pending' ? 'destructive' : 'outline'} className="mb-2 text-[10px]">
-                      {selectedReport.status === 'pending' ? 'Butuh Tanggapan' : 'Selesai'}
+                    <Badge variant={selectedReport.status === 'pending' ? 'destructive' : selectedReport.status === 'selesai' ? 'outline' : 'default'} className="mb-2 text-[10px]">
+                      {selectedReport.status === 'pending' ? 'Butuh Tanggapan' : selectedReport.status === 'selesai' ? 'Selesai' : 'Diproses'}
                     </Badge>
                     <CardTitle className="text-lg font-bold text-slate-800 dark:text-slate-100">
                       {selectedReport.subject}
@@ -231,62 +286,109 @@ export default function AdminReportsPage() {
                       Dilaporkan pada {format(new Date(selectedReport.created_at), 'dd MMM yyyy, HH:mm', { locale: id })}
                     </div>
                   </div>
-                  <Link href={`/admin/chat/${selectedReport.order_id}`}>
-                    <Button variant="outline" className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-900/50 dark:hover:bg-rose-950/30 text-xs rounded-xl">
-                      <MessageSquare className="h-4 w-4 mr-2" />
-                      Buka Ruang Chat
+                  {selectedReport.status !== 'selesai' && (
+                    <Button 
+                      onClick={handleSelesai} 
+                      disabled={isFinishing}
+                      variant="outline" 
+                      className="text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 dark:border-emerald-900/50 dark:hover:bg-emerald-950/30 text-xs rounded-xl"
+                    >
+                      {isFinishing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+                      Tandai Selesai
                     </Button>
-                  </Link>
+                  )}
                 </div>
               </CardHeader>
 
-              <CardContent className="flex-1 p-0 flex flex-col">
-                <div className="p-6 space-y-6 flex-1 overflow-y-auto">
+              <CardContent className="flex-1 p-0 flex flex-col overflow-hidden">
+                <div className="p-4 border-b border-slate-100 dark:border-slate-800 shrink-0">
                   {/* Customer Info Grid */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 flex items-center justify-center">
+                      <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 flex items-center justify-center shrink-0">
                         <User className="h-4 w-4" />
                       </div>
-                      <div>
-                        <div className="text-[10px] text-slate-500 font-bold uppercase">Pelanggan</div>
-                        <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">{selectedReport.profiles?.full_name}</div>
-                        <div className="text-[10px] text-slate-500">{selectedReport.profiles?.phone || '-'}</div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] text-slate-500 font-bold uppercase truncate">Pelanggan</div>
+                        <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{selectedReport.profiles?.full_name}</div>
+                        <div className="text-[10px] text-slate-500 truncate">{selectedReport.profiles?.phone || '-'}</div>
                       </div>
                     </div>
                     <div className="bg-slate-50 dark:bg-slate-950 p-3 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center">
+                      <div className="h-8 w-8 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center shrink-0">
                         <Laptop className="h-4 w-4" />
                       </div>
-                      <div>
-                        <div className="text-[10px] text-slate-500 font-bold uppercase">Pesanan Terkait</div>
-                        <div className="text-xs font-semibold text-blue-900 dark:text-blue-400">{selectedReport.orders?.order_code}</div>
+                      <div className="min-w-0">
+                        <div className="text-[10px] text-slate-500 font-bold uppercase truncate">Pesanan Terkait</div>
+                        <div className="text-xs font-semibold text-blue-900 dark:text-blue-400 truncate">{selectedReport.orders?.order_code}</div>
                         <div className="text-[10px] text-slate-500 truncate">{selectedReport.orders?.device_name}</div>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  {/* Complaint Description */}
-                  <div className="space-y-2">
-                    <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Detail Laporan</h3>
-                    <div className="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/50 p-4 rounded-xl text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
-                      {selectedReport.description}
+                {/* Chat History Area */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/30 dark:bg-slate-950/30">
+                  {/* Initial Report Description Message */}
+                  <div className="flex justify-start">
+                    <div className="max-w-[85%] rounded-2xl p-3 text-sm leading-relaxed bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-100 dark:border-slate-700 shadow-sm">
+                      <div className="text-xs font-bold text-rose-600 dark:text-rose-400 mb-1">Pesan Laporan (Otomatis)</div>
+                      <p className="whitespace-pre-wrap">{selectedReport.description}</p>
+                      <div className="text-[9px] mt-1.5 text-right font-medium text-slate-400">
+                        {format(new Date(selectedReport.created_at), 'HH:mm', { locale: id })}
+                      </div>
                     </div>
                   </div>
+
+                  {/* Real Chat Messages */}
+                  {loadingMessages ? (
+                    <div className="flex justify-center p-4">
+                      <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+                    </div>
+                  ) : (
+                    messages.map((msg) => {
+                      const isMe = msg.sender_id === user?.id
+                      return (
+                        <div
+                          key={msg.id}
+                          className={`flex ${isMe ? 'justify-end' : 'justify-start'} animate-in fade-in-30 slide-in-from-bottom-2 duration-150`}
+                        >
+                          <div
+                            className={`max-w-[85%] rounded-2xl p-3 shadow-sm text-sm leading-relaxed ${
+                              isMe
+                                ? 'bg-rose-600 text-white rounded-br-none'
+                                : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-tl-none border border-slate-100 dark:border-slate-700'
+                            }`}
+                          >
+                            <p className="whitespace-pre-wrap">{msg.content}</p>
+                            <div
+                              className={`text-[9px] mt-1.5 text-right font-medium ${
+                                isMe ? 'text-rose-100' : 'text-slate-400'
+                              }`}
+                            >
+                              {format(new Date(msg.created_at), 'HH:mm', { locale: id })}
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })
+                  )}
+                  <div ref={messagesEndRef} />
                 </div>
 
                 {/* Reply Form */}
-                <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
-                  <form onSubmit={handleReply} className="space-y-3">
-                    <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                      Balas Laporan (Pesan akan dikirim ke Ruang Chat Pesanan)
-                    </label>
-                    <div className="flex gap-2">
+                <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
+                  {selectedReport.status === 'selesai' ? (
+                    <div className="text-center p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800 text-sm text-slate-500 font-medium">
+                      Laporan ini telah ditutup.
+                    </div>
+                  ) : (
+                    <form onSubmit={handleReply} className="flex gap-2">
                       <Input
                         value={replyText}
                         onChange={(e) => setReplyText(e.target.value)}
                         placeholder="Ketik balasan Anda di sini..."
-                        className="flex-1 bg-white dark:bg-slate-900 rounded-xl"
+                        className="flex-1 bg-slate-50 dark:bg-slate-950 rounded-xl border-slate-200 dark:border-slate-700"
                         disabled={isReplying}
                         required
                       />
@@ -302,13 +404,13 @@ export default function AdminReportsPage() {
                           </>
                         )}
                       </Button>
-                    </div>
-                  </form>
+                    </form>
+                  )}
                 </div>
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl h-full border-dashed flex flex-col items-center justify-center p-12 text-center">
+            <Card className="border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl h-full border-dashed flex flex-col items-center justify-center p-12 text-center min-h-[500px]">
               <AlertCircle className="h-12 w-12 text-slate-300 dark:text-slate-700 mb-4" />
               <h3 className="text-lg font-bold text-slate-600 dark:text-slate-400 font-heading">Tidak Ada Laporan Terpilih</h3>
               <p className="text-sm text-slate-500 mt-2 max-w-sm">
