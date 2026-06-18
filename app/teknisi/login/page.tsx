@@ -93,16 +93,16 @@ function TeknisiLoginForm() {
   return (
     <>
       {errorMessage && (
-        <div className="mb-4 bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-xl flex items-start gap-3 text-sm">
+        <div className="mb-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 text-amber-800 dark:text-amber-200 p-4 rounded-xl flex items-start gap-3 text-sm">
           <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
           <div>{errorMessage}</div>
         </div>
       )}
 
-      <Card className="border-slate-100 shadow-sm rounded-2xl">
+      <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold font-heading text-slate-800">Login Teknisi</CardTitle>
-          <CardDescription>Masuk untuk mengelola tugas perbaikan Anda</CardDescription>
+          <CardTitle className="text-2xl font-bold font-heading text-slate-800 dark:text-slate-100">Login Teknisi</CardTitle>
+          <CardDescription className="text-slate-500 dark:text-slate-400">Masuk untuk mengelola tugas perbaikan Anda</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -115,7 +115,7 @@ function TeknisiLoginForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="rounded-xl border-slate-200"
+                className="rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
               />
             </div>
             <div className="space-y-2">
@@ -127,7 +127,7 @@ function TeknisiLoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="rounded-xl border-slate-200"
+                className="rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100"
               />
             </div>
             <Button
@@ -139,15 +139,15 @@ function TeknisiLoginForm() {
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4 text-sm text-center border-t border-slate-50 pt-6">
-          <div>
+        <CardFooter className="flex flex-col space-y-4 text-sm text-center border-t border-slate-50 dark:border-slate-800 pt-6">
+          <div className="text-slate-600 dark:text-slate-400">
             Belum terdaftar sebagai teknisi?{' '}
-            <Link href="/teknisi/register" className="text-blue-600 hover:underline font-medium">
+            <Link href="/teknisi/register" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
               Daftar sekarang
             </Link>
           </div>
           <div>
-            <Link href="/login" className="text-slate-500 hover:underline">
+            <Link href="/login" className="text-slate-500 dark:text-slate-400 hover:underline">
               Bukan teknisi? Masuk sebagai Pelanggan
             </Link>
           </div>
@@ -159,10 +159,10 @@ function TeknisiLoginForm() {
 
 export default function TeknisiLoginPage() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 min-h-screen relative">
+    <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 min-h-screen relative">
       <Link 
         href="/" 
-        className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors"
+        className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         <span className="hidden sm:inline">Kembali ke Beranda</span>
@@ -174,15 +174,15 @@ export default function TeknisiLoginPage() {
           <div className="bg-amber-500 text-white p-2 rounded-xl">
             <Wrench className="h-6 w-6" />
           </div>
-          <span className="text-2xl font-bold font-heading tracking-wider text-slate-800">
-            FixIT <span className="text-sm font-semibold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-md">Teknisi</span>
+          <span className="text-2xl font-bold font-heading tracking-wider text-slate-800 dark:text-slate-100">
+            FixIT <span className="text-sm font-semibold text-amber-500 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded-md">Teknisi</span>
           </span>
         </div>
 
         <Suspense fallback={
-          <Card className="border-slate-100 shadow-sm rounded-2xl p-6 flex flex-col items-center justify-center min-h-[300px]">
+          <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm rounded-2xl p-6 flex flex-col items-center justify-center min-h-[300px]">
             <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
-            <span className="text-xs text-slate-500 font-semibold mt-2">Memuat halaman login teknisi...</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold mt-2">Memuat halaman login teknisi...</span>
           </Card>
         }>
           <TeknisiLoginForm />
