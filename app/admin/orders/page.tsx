@@ -39,14 +39,40 @@ export default function AdminOrdersPage() {
     try {
       const supabase = createClient()
       
-      // 1. Fetch all orders with clients and assigned technician profile details
+      // 1. Fetch all orders and order_items
       const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
-        .select('*, pelanggan:profiles(*), teknisi:profiles(*), order_items(*)')
+        .select('*, order_items(*)')
         .order('created_at', { ascending: false })
 
       if (ordersError) throw ordersError
-      setOrders(ordersData || [])
+      
+      let finalOrders = ordersData || []
+      
+      // Fetch profiles separately to avoid ambiguous foreign key error
+      if (finalOrders.length > 0) {
+        const pelangganIds = [...new Set(finalOrders.map((o: any) => o.pelanggan_id).filter(Boolean))]
+        const teknisiIds = [...new Set(finalOrders.map((o: any) => o.teknisi_id).filter(Boolean))]
+        const allProfileIds = [...new Set([...pelangganIds, ...teknisiIds])]
+        
+        if (allProfileIds.length > 0) {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('*')
+            .in('id', allProfileIds)
+            
+          if (profiles) {
+            const profilesMap = Object.fromEntries(profiles.map((p: any) => [p.id, p]))
+            finalOrders = finalOrders.map((o: any) => ({
+              ...o,
+              pelanggan: profilesMap[o.pelanggan_id] || null,
+              teknisi: profilesMap[o.teknisi_id] || null
+            }))
+          }
+        }
+      }
+
+      setOrders(finalOrders)
 
       // 2. Fetch all active technicians
       const { data: techsData } = await supabase
