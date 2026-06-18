@@ -179,26 +179,26 @@ export default function PaymentPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-xl pb-24">
       <div className="flex items-center gap-2 mb-6">
-        <Link href="/orders/new" className="text-slate-500 hover:text-slate-800 transition-colors">
+        <Link href="/orders/new" className="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
           <ChevronLeft className="h-5 w-5" />
         </Link>
-        <span className="text-sm text-slate-500 font-medium">Kembali ke Detail Lokasi</span>
+        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Kembali ke Detail Lokasi</span>
       </div>
 
       <div className="space-y-2 mb-6">
-        <h1 className="text-2xl font-extrabold font-heading text-slate-800">
+        <h1 className="text-2xl font-extrabold font-heading text-slate-800 dark:text-slate-100">
           Metode Pembayaran
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Pilih metode pembayaran aman untuk mengonfirmasi order servis laptop
         </p>
       </div>
 
       <div className="space-y-6">
         {/* Payment Methods */}
-        <Card className="border-slate-100 rounded-2xl shadow-sm">
-          <CardHeader className="pb-3 border-b border-slate-50">
-            <CardTitle className="text-base font-bold font-heading text-slate-800">
+        <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl shadow-sm">
+          <CardHeader className="pb-3 border-b border-slate-50 dark:border-slate-800/50">
+            <CardTitle className="text-base font-bold font-heading text-slate-800 dark:text-slate-100">
               Pilih Metode
             </CardTitle>
           </CardHeader>
@@ -209,16 +209,16 @@ export default function PaymentPage() {
               className={cn(
                 'p-4 border rounded-2xl flex items-center gap-4 cursor-pointer select-none transition-all active:scale-[0.99]',
                 paymentMethod === 'qris'
-                  ? 'border-blue-500 bg-blue-50/20 ring-1 ring-blue-500'
-                  : 'border-slate-100 hover:bg-slate-50'
+                  ? 'border-blue-500 bg-blue-50/20 dark:bg-blue-900/20 ring-1 ring-blue-500'
+                  : 'border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50'
               )}
             >
               <div className="bg-emerald-100 text-emerald-600 p-2.5 rounded-xl shrink-0">
                 <QrCode className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-slate-800 text-sm font-heading">QRIS (OVO, GoPay, Dana, LinkAja)</h3>
-                <p className="text-xs text-slate-500">Pembayaran instan menggunakan scan kode QR</p>
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm font-heading">QRIS (OVO, GoPay, Dana, LinkAja)</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Pembayaran instan menggunakan scan kode QR</p>
               </div>
             </div>
 
@@ -228,22 +228,22 @@ export default function PaymentPage() {
               className={cn(
                 'p-4 border rounded-2xl flex items-center gap-4 cursor-pointer select-none transition-all active:scale-[0.99]',
                 paymentMethod === 'virtual_account'
-                  ? 'border-blue-500 bg-blue-50/20 ring-1 ring-blue-500'
-                  : 'border-slate-100 hover:bg-slate-50'
+                  ? 'border-blue-500 bg-blue-50/20 dark:bg-blue-900/20 ring-1 ring-blue-500'
+                  : 'border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50'
               )}
             >
               <div className="bg-blue-100 text-blue-600 p-2.5 rounded-xl shrink-0">
                 <Landmark className="h-6 w-6" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-slate-800 text-sm font-heading">Virtual Account (Transfer Bank)</h3>
-                <p className="text-xs text-slate-500">BCA, BNI, Mandiri. Konfirmasi pembayaran otomatis.</p>
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm font-heading">Virtual Account (Transfer Bank)</h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">BCA, BNI, Mandiri. Konfirmasi pembayaran otomatis.</p>
               </div>
             </div>
 
             {/* VA Banks Selection */}
             {paymentMethod === 'virtual_account' && (
-              <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2 rounded-xl border border-slate-100">
+              <div className="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-slate-950 p-2 rounded-xl border border-slate-100 dark:border-slate-800">
                 {['bca', 'bni', 'mandiri'].map((bank) => (
                   <button
                     key={bank}
@@ -252,8 +252,8 @@ export default function PaymentPage() {
                     className={cn(
                       'py-2.5 rounded-lg text-xs font-bold uppercase transition-all',
                       vaBank === bank
-                        ? 'bg-blue-900 text-white shadow-sm'
-                        : 'text-slate-650 hover:bg-slate-100'
+                        ? 'bg-blue-900 dark:bg-blue-600 text-white shadow-sm'
+                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50'
                     )}
                   >
                     {bank}
@@ -265,22 +265,22 @@ export default function PaymentPage() {
         </Card>
 
         {/* Invoice Summary */}
-        <Card className="border-slate-100 rounded-2xl shadow-sm">
-          <CardHeader className="pb-3 border-b border-slate-50">
-            <CardTitle className="text-base font-bold font-heading text-slate-800">
+        <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl shadow-sm">
+          <CardHeader className="pb-3 border-b border-slate-50 dark:border-slate-800/50">
+            <CardTitle className="text-base font-bold font-heading text-slate-800 dark:text-slate-100">
               Rincian Pembayaran
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-4 space-y-3">
             <div className="flex justify-between items-center text-sm">
-              <span className="text-slate-500">Estimasi Biaya Servis</span>
-              <span className="font-semibold text-slate-700">{formatPrice(getSubtotal())}</span>
+              <span className="text-slate-500 dark:text-slate-400">Estimasi Biaya Servis</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-200">{formatPrice(getSubtotal())}</span>
             </div>
             <div className="flex justify-between items-center text-sm">
-              <span className="text-slate-500">Biaya Kunjungan & Admin</span>
-              <span className="font-semibold text-slate-700">{formatPrice(adminFee)}</span>
+              <span className="text-slate-500 dark:text-slate-400">Biaya Kunjungan & Admin</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-200">{formatPrice(adminFee)}</span>
             </div>
-            <div className="border-t border-slate-100 pt-3 flex justify-between items-center text-base font-bold text-blue-900 font-heading">
+            <div className="border-t border-slate-100 dark:border-slate-800/50 pt-3 flex justify-between items-center text-base font-bold text-blue-900 dark:text-blue-400 font-heading">
               <span>Total Pembayaran</span>
               <span>{formatPrice(getTotal())}</span>
             </div>
@@ -288,7 +288,7 @@ export default function PaymentPage() {
         </Card>
 
         {/* Security Notice */}
-        <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-55 border border-slate-100 rounded-2xl text-xs text-slate-500 leading-relaxed">
+        <div className="flex items-center gap-2.5 px-4 py-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 rounded-2xl text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
           <ShieldCheck className="h-5 w-5 text-emerald-500 shrink-0" />
           <span>Pembayaran Anda dilindungi enkripsi SSL 256-bit dan diproses secara aman oleh Midtrans.</span>
         </div>
