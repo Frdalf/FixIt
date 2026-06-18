@@ -212,7 +212,7 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
-          <Link href="/history" className="text-slate-500 hover:text-slate-800 transition-colors">
+          <Link href="/history" className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition-colors">
             <ChevronLeft className="h-5 w-5" />
           </Link>
           <span className="text-sm text-slate-500 font-medium">Riwayat</span>
@@ -225,7 +225,7 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
       <div className="space-y-6">
         {/* Track Title */}
         <div className="space-y-1">
-          <h1 className="text-2xl font-extrabold font-heading text-slate-800">
+          <h1 className="text-2xl font-extrabold font-heading text-slate-800 dark:text-slate-100">
             Lacak Perbaikan Laptop
           </h1>
           <p className="text-sm text-slate-500">
@@ -235,11 +235,11 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
 
         {/* Stepper Status Visual */}
         {!isCancelled && (
-          <Card className="border-slate-100 rounded-2xl shadow-sm bg-white">
+          <Card className="border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm bg-white dark:bg-slate-900">
             <CardContent className="p-6">
               <div className="relative flex justify-between items-center w-full">
                 {/* Connector Line */}
-                <div className="absolute top-4 left-4 right-4 h-1 bg-slate-100 -z-10" />
+                <div className="absolute top-4 left-4 right-4 h-1 bg-slate-100 dark:bg-slate-800 -z-10" />
                 <div
                   className="absolute top-4 left-4 h-1 bg-blue-900 -z-10 transition-all duration-500"
                   style={{
@@ -260,8 +260,8 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
                           'h-8 w-8 rounded-full flex items-center justify-center border-2 transition-all font-bold text-xs select-none',
                           isDone
                             ? 'bg-blue-900 border-blue-900 text-white'
-                            : 'bg-white border-slate-200 text-slate-400',
-                          isCurrent ? 'ring-4 ring-blue-100 scale-110' : ''
+                            : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-400',
+                          isCurrent ? 'ring-4 ring-blue-100 dark:ring-blue-900/50 scale-110' : ''
                         )}
                       >
                         {index + 1}
@@ -279,8 +279,8 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
                 })}
               </div>
 
-              <div className="mt-6 pt-5 border-t border-slate-50 text-center sm:text-left">
-                <h3 className="font-bold text-slate-800 text-sm">{meta.label}</h3>
+              <div className="mt-6 pt-5 border-t border-slate-50 dark:border-slate-800 text-center sm:text-left">
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm">{meta.label}</h3>
                 <p className="text-xs text-slate-500 mt-1">{meta.description}</p>
               </div>
             </CardContent>
@@ -288,11 +288,11 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
         )}
 
         {isCancelled && (
-          <Card className="border-rose-100 bg-rose-50/20 rounded-2xl p-5 flex items-start gap-4">
+          <Card className="border-rose-100 dark:border-rose-900/50 bg-rose-50/20 dark:bg-rose-950/20 rounded-2xl p-5 flex items-start gap-4">
             <XCircle className="h-6 w-6 text-rose-500 shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-bold text-rose-950 text-sm">Pesanan Dibatalkan</h3>
-              <p className="text-xs text-rose-700 leading-relaxed mt-1">
+              <h3 className="font-bold text-rose-950 dark:text-rose-400 text-sm">Pesanan Dibatalkan</h3>
+              <p className="text-xs text-rose-700 dark:text-rose-500 leading-relaxed mt-1">
                 Alasan: {order.cancel_reason || 'Tidak didefinisikan'}
               </p>
             </div>
@@ -301,19 +301,19 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
 
         {/* Assigned Technician Profile */}
         {technician && (
-          <Card className="border-slate-100 rounded-2xl shadow-sm bg-white overflow-hidden">
-            <CardHeader className="pb-3 border-b border-slate-50 bg-slate-50/40">
-              <CardTitle className="text-sm font-bold text-slate-700 font-heading">
+          <Card className="border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm bg-white dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 border-b border-slate-50 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-900/40">
+              <CardTitle className="text-sm font-bold text-slate-700 dark:text-slate-200 font-heading">
                 Teknisi yang Bertugas
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-900 font-black text-lg shadow-sm shrink-0">
+                <div className="h-14 w-14 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 flex items-center justify-center text-blue-900 dark:text-blue-300 font-black text-lg shadow-sm shrink-0">
                   {technician.full_name.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-bold text-slate-800 font-heading text-sm">{technician.full_name}</h3>
+                  <h3 className="font-bold text-slate-800 dark:text-slate-100 font-heading text-sm">{technician.full_name}</h3>
                   <div className="flex items-center gap-3 text-xs text-slate-500 font-medium">
                     <span className="flex items-center gap-0.5 text-amber-500 font-bold">
                       <Star className="h-3.5 w-3.5 fill-amber-500 stroke-amber-500" />
@@ -338,7 +338,7 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <a
                   href={`tel:${technician.phone}`}
-                  className="flex-1 sm:flex-initial text-center py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
+                  className="flex-1 sm:flex-initial text-center py-2.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors flex justify-center items-center gap-1.5 text-xs font-semibold"
                 >
                   <Phone className="h-3.5 w-3.5" /> Hubungi
                 </a>
@@ -354,9 +354,9 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
         )}
 
         {/* Order Details & Summary */}
-        <Card className="border-slate-100 rounded-2xl shadow-sm bg-white">
-          <CardHeader className="pb-3 border-b border-slate-50">
-            <CardTitle className="text-sm font-bold text-slate-700 font-heading">
+        <Card className="border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm bg-white dark:bg-slate-900">
+          <CardHeader className="pb-3 border-b border-slate-50 dark:border-slate-800">
+            <CardTitle className="text-sm font-bold text-slate-700 dark:text-slate-200 font-heading">
               Rincian Perangkat & Layanan
             </CardTitle>
           </CardHeader>
@@ -365,17 +365,17 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
             <div className="flex items-start gap-3 text-sm">
               <Laptop className="h-5 w-5 text-slate-400 mt-0.5 shrink-0" />
               <div>
-                <div className="font-bold text-slate-800 font-heading uppercase">{order.device_name}</div>
+                <div className="font-bold text-slate-800 dark:text-slate-100 font-heading uppercase">{order.device_name}</div>
                 <div className="text-xs text-slate-500 capitalize">{order.device_type}</div>
               </div>
             </div>
 
             {/* Address Info */}
-            <div className="flex items-start gap-3 text-sm border-t border-slate-50 pt-3">
+            <div className="flex items-start gap-3 text-sm border-t border-slate-50 dark:border-slate-800 pt-3">
               <MapPin className="h-5 w-5 text-slate-400 mt-0.5 shrink-0" />
               <div>
-                <div className="font-bold text-slate-800 text-sm">Alamat Pertemuan</div>
-                <p className="text-xs text-slate-600 leading-relaxed mt-1">{order.location_address}</p>
+                <div className="font-bold text-slate-800 dark:text-slate-100 text-sm">Alamat Pertemuan</div>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-1">{order.location_address}</p>
                 {order.location_notes && (
                   <p className="text-[10px] text-amber-600 bg-amber-50 border border-amber-100 rounded-lg py-1 px-2.5 w-fit mt-1.5 font-medium">
                     Catatan: {order.location_notes}
@@ -386,18 +386,18 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
 
             {/* Diagnostic Notes */}
             {order.order_notes && (
-              <div className="flex items-start gap-3 text-sm border-t border-slate-50 pt-3">
+              <div className="flex items-start gap-3 text-sm border-t border-slate-50 dark:border-slate-800 pt-3">
                 <FileText className="h-5 w-5 text-slate-400 mt-0.5 shrink-0" />
                 <div>
-                  <div className="font-bold text-slate-850 text-sm">Catatan Kendala</div>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-1 italic">"{order.order_notes}"</p>
+                  <div className="font-bold text-slate-800 dark:text-slate-100 text-sm">Catatan Kendala</div>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-1 italic">"{order.order_notes}"</p>
                 </div>
               </div>
             )}
 
             {/* Cost Items */}
-            <div className="border-t border-slate-50 pt-3 space-y-2">
-              <div className="font-bold text-slate-800 text-xs uppercase tracking-wide">Estimasi Rincian Biaya</div>
+            <div className="border-t border-slate-50 dark:border-slate-800 pt-3 space-y-2">
+              <div className="font-bold text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wide">Estimasi Rincian Biaya</div>
               {order.order_items?.map((item: any) => (
                 <div key={item.id} className="flex justify-between items-center text-xs">
                   <span className="text-slate-500">{item.service_name}</span>
@@ -406,9 +406,9 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
               ))}
               <div className="flex justify-between items-center text-xs">
                 <span className="text-slate-500">Biaya Kunjungan & Admin</span>
-                <span className="font-medium text-slate-750">{formatPrice(order.admin_fee)}</span>
+                <span className="font-medium text-slate-750 dark:text-slate-300">{formatPrice(order.admin_fee)}</span>
               </div>
-              <div className="flex justify-between items-center text-sm font-bold text-blue-900 font-heading border-t border-slate-100 pt-2.5 mt-2">
+              <div className="flex justify-between items-center text-sm font-bold text-blue-900 dark:text-blue-400 font-heading border-t border-slate-100 dark:border-slate-800 pt-2.5 mt-2">
                 <span>Total Estimasi Bayar</span>
                 <span>{formatPrice(order.total)}</span>
               </div>
