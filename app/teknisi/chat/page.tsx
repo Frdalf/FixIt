@@ -70,7 +70,7 @@ export default function TeknisiChatListPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 min-h-screen">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-900 min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
         <span className="text-sm text-slate-500 font-medium mt-2">Memuat daftar chat...</span>
       </div>
@@ -80,17 +80,17 @@ export default function TeknisiChatListPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl pb-24">
       <div className="space-y-2 mb-6">
-        <h1 className="text-2xl font-extrabold font-heading text-slate-800">
+        <h1 className="text-2xl font-extrabold font-heading text-slate-800 dark:text-slate-100">
           Chat Pelanggan
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Kirim pesan langsung ke pelanggan untuk koordinasi kedatangan & detail servis
         </p>
       </div>
 
       <div className="space-y-4">
         {chats.length === 0 ? (
-          <div className="text-center py-16 bg-white border border-slate-100 rounded-2xl p-6 text-slate-500 space-y-3">
+          <div className="text-center py-16 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 text-slate-500 dark:text-slate-400 space-y-3">
             <MessageSquare className="h-8 w-8 text-slate-350 mx-auto" />
             <div className="text-sm font-medium">Belum ada chat aktif</div>
             <p className="text-xs text-slate-400 max-w-xs mx-auto">
@@ -104,17 +104,17 @@ export default function TeknisiChatListPage() {
             
             return (
               <Link href={`/teknisi/chat/${chat.orders.id}`} key={chat.id}>
-                <Card className="border-slate-100 hover:border-amber-250 hover:shadow-sm transition-all rounded-2xl bg-white cursor-pointer group">
+                <Card className="border-slate-100 dark:border-slate-800 hover:border-amber-250 dark:hover:border-amber-600 hover:shadow-sm transition-all rounded-2xl bg-white dark:bg-slate-900 cursor-pointer group">
                   <CardContent className="p-5 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-full bg-amber-50 text-amber-600 font-bold flex items-center justify-center text-sm shadow-sm shrink-0">
+                      <div className="h-12 w-12 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 font-bold flex items-center justify-center text-sm shadow-sm shrink-0">
                         {pelangganName.slice(0, 2).toUpperCase()}
                       </div>
                       <div className="space-y-1">
-                        <h3 className="font-bold text-slate-800 text-sm font-heading group-hover:text-amber-600 transition-colors">
+                        <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm font-heading group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                           {pelangganName}
                         </h3>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500">
+                        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
                           {isKonsultasi ? (
                             <HelpCircle className="h-3.5 w-3.5 text-blue-500" />
                           ) : (
@@ -126,7 +126,7 @@ export default function TeknisiChatListPage() {
                         </div>
                       </div>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-slate-700 transition-colors" />
+                    <ChevronRight className="h-5 w-5 text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors" />
                   </CardContent>
                 </Card>
               </Link>
