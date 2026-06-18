@@ -1,5 +1,5 @@
 'use client'
-
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -68,9 +68,10 @@ export default function AdminReportsPage() {
         .from('chats')
         .select('id')
         .eq('order_id', selectedReport.order_id)
+        .limit(1)
         .maybeSingle()
 
-      if (chatError && chatError.code !== 'PGRST116') throw chatError
+      if (chatError) throw chatError
 
       if (existingChat) {
         chatId = existingChat.id
@@ -230,6 +231,12 @@ export default function AdminReportsPage() {
                       Dilaporkan pada {format(new Date(selectedReport.created_at), 'dd MMM yyyy, HH:mm', { locale: id })}
                     </div>
                   </div>
+                  <Link href={`/admin/chat/${selectedReport.order_id}`}>
+                    <Button variant="outline" className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-900/50 dark:hover:bg-rose-950/30 text-xs rounded-xl">
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      Buka Ruang Chat
+                    </Button>
+                  </Link>
                 </div>
               </CardHeader>
 

@@ -8,12 +8,11 @@ import { useAuth } from '@/hooks/useAuth'
 import { useRealtimeChat } from '@/hooks/useRealtimeChat'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent } from '@/components/ui/card'
-import { ChevronLeft, Send, Laptop, Loader2, Shield } from 'lucide-react'
+import { ChevronLeft, Send, Laptop, Loader2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
 
-export default function PelangganChatRoomPage({ params }: { params: { orderId: string } }) {
+export default function AdminChatRoomPage({ params }: { params: { orderId: string } }) {
   const orderId = params.orderId
   const { user } = useAuth()
   const router = useRouter()
@@ -37,15 +36,15 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
           .maybeSingle()
 
         if (!error && chatData) {
-          // Fetch technician profile separately to avoid ambiguous foreign key error
-          if (chatData.orders?.teknisi_id) {
-            const { data: techProfile } = await supabase
+          // Fetch pelanggan profile separately to avoid ambiguous foreign key error
+          if (chatData.orders?.pelanggan_id) {
+            const { data: pelangganProfile } = await supabase
               .from('profiles')
               .select('*')
-              .eq('id', chatData.orders.teknisi_id)
+              .eq('id', chatData.orders.pelanggan_id)
               .single()
             
-            chatData.orders.teknisi = techProfile
+            chatData.orders.pelanggan = pelangganProfile
           }
           setChat(chatData)
         } else if (!error && !chatData) {
@@ -57,13 +56,13 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
               .single()
 
             if (!createError && newChat) {
-              if (newChat.orders?.teknisi_id) {
-                const { data: techProfile } = await supabase
+              if (newChat.orders?.pelanggan_id) {
+                const { data: pelangganProfile } = await supabase
                   .from('profiles')
                   .select('*')
-                  .eq('id', newChat.orders.teknisi_id)
+                  .eq('id', newChat.orders.pelanggan_id)
                   .single()
-                newChat.orders.teknisi = techProfile
+                newChat.orders.pelanggan = pelangganProfile
               }
               setChat(newChat)
             } else {
@@ -86,8 +85,8 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
           orders: {
             order_code: 'FIX-928374',
             device_name: 'MacBook Air M1 2020',
-            teknisi: {
-              full_name: 'Rudi Hermawan',
+            pelanggan: {
+              full_name: 'Farid Ahmad',
             },
           },
         })
@@ -118,7 +117,7 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
   if (loading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-900" />
+        <Loader2 className="h-8 w-8 animate-spin text-rose-600" />
         <span className="text-sm text-slate-500 font-medium mt-2">Menghubungkan ruang obrolan...</span>
       </div>
     )
@@ -129,32 +128,26 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
       <div className="container mx-auto px-4 py-16 text-center space-y-4 max-w-md">
         <h2 className="text-xl font-bold font-heading">Ruang Chat Tidak Ditemukan</h2>
         <p className="text-sm text-slate-500">
-          Pesanan ini belum memiliki sesi obrolan aktif. Pastikan pesanan Anda telah dikonfirmasi oleh teknisi.
+          Pesanan ini belum memiliki sesi obrolan aktif.
         </p>
-        {fetchError && (
-          <div className="p-4 bg-red-50 text-red-600 text-xs text-left rounded-xl overflow-auto">
-            <strong>Error Details:</strong>
-            <pre>{JSON.stringify(fetchError, null, 2)}</pre>
-          </div>
-        )}
-        <Link href="/chat">
-          <Button className="bg-blue-900 text-white rounded-xl">Kembali ke Daftar Chat</Button>
+        <Link href="/admin/reports">
+          <Button className="bg-rose-600 text-white rounded-xl">Kembali ke Laporan</Button>
         </Link>
       </div>
     )
   }
 
-  const partnerName = chat.orders?.teknisi?.full_name || 'Teknisi FixIT'
+  const partnerName = chat.orders?.pelanggan?.full_name || 'Pelanggan FixIT'
 
   return (
     <div className="flex-1 flex flex-col h-[calc(100vh-64px)] md:h-screen max-w-2xl mx-auto bg-white dark:bg-slate-900 border-x border-slate-100 dark:border-slate-800">
       {/* Header */}
       <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
         <div className="flex items-center gap-3">
-          <Link href="/chat" className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition-colors">
+          <Link href="/admin/reports" className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition-colors">
             <ChevronLeft className="h-6 w-6" />
           </Link>
-          <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 font-bold flex items-center justify-center text-sm shadow-sm shrink-0">
+          <div className="h-10 w-10 rounded-full bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-300 font-bold flex items-center justify-center text-sm shadow-sm shrink-0">
             {partnerName.slice(0, 2).toUpperCase()}
           </div>
           <div>
@@ -173,13 +166,11 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/20 dark:bg-slate-950/20">
         {messages.length === 0 ? (
           <div className="text-center py-12 text-xs text-slate-400">
-            Kirim pesan pertama untuk berkoordinasi dengan teknisi.
+            Kirim pesan pertama untuk berkoordinasi dengan pelanggan.
           </div>
         ) : (
           messages.map((msg) => {
             const isMe = msg.sender_id === user?.id
-            const isAdmin = !isMe && msg.sender_id !== chat.orders?.teknisi_id
-
             return (
               <div
                 key={msg.id}
@@ -188,21 +179,14 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
                 <div
                   className={`max-w-[80%] rounded-2xl p-3 shadow-sm text-xs sm:text-sm leading-relaxed ${
                     isMe
-                      ? 'bg-blue-900 text-white rounded-br-none'
-                      : isAdmin
-                        ? 'bg-rose-50 dark:bg-rose-950/40 text-slate-800 dark:text-slate-100 border border-rose-200 dark:border-rose-900/50 rounded-bl-none'
-                        : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-none border border-slate-100 dark:border-slate-700'
+                      ? 'bg-rose-600 text-white rounded-br-none'
+                      : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-none border border-slate-100 dark:border-slate-700'
                   }`}
                 >
-                  {isAdmin && (
-                    <div className="text-[10px] font-bold text-rose-600 dark:text-rose-400 mb-1 flex items-center gap-1">
-                      <Shield className="h-3 w-3" /> Admin FixIT
-                    </div>
-                  )}
                   <p>{msg.content}</p>
                   <div
                     className={`text-[9px] mt-1.5 text-right font-medium ${
-                      isMe ? 'text-blue-200' : 'text-slate-400'
+                      isMe ? 'text-rose-100' : 'text-slate-400'
                     }`}
                   >
                     {format(new Date(msg.created_at), 'HH:mm', { locale: id })}
@@ -218,7 +202,7 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
       {/* Input Message Footer */}
       <form onSubmit={handleSend} className="p-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2 shrink-0 bg-white dark:bg-slate-900">
         <Input
-          placeholder="Tulis pesan..."
+          placeholder="Tulis pesan balasan..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           className="rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 text-xs sm:text-sm py-5"
@@ -226,7 +210,7 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
         />
         <Button
           type="submit"
-          className="bg-amber-500 hover:bg-amber-600 text-white rounded-xl p-3 h-auto shrink-0 shadow-sm transition-colors active:scale-95"
+          className="bg-rose-600 hover:bg-rose-700 text-white rounded-xl p-3 h-auto shrink-0 shadow-sm transition-colors active:scale-95"
         >
           <Send className="h-4 w-4" />
         </Button>

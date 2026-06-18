@@ -43,7 +43,9 @@ export default function TeknisiChatListPage() {
               })
             }
           }
-          setChats(data)
+          // Filter duplicate chats based on order_id
+          const uniqueChats = data.filter((v: any, i: number, a: any[]) => a.findIndex(t => t.order_id === v.order_id) === i);
+          setChats(uniqueChats)
         }
       } catch (err) {
         console.warn('Error fetching chats. Using mock data.', err)
