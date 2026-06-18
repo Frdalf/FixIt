@@ -159,6 +159,19 @@ create table public.reviews (
 
 alter table public.reviews enable row level security;
 
+-- 10.5. Customer Reports Table
+create table public.customer_reports (
+  id uuid primary key default gen_random_uuid(),
+  pelanggan_id uuid references public.profiles(id) on delete cascade,
+  order_id uuid references public.orders(id) on delete cascade,
+  subject text not null,
+  description text not null,
+  status text default 'pending' check (status in ('pending', 'replied', 'closed')),
+  created_at timestamptz default now()
+);
+
+alter table public.customer_reports enable row level security;
+
 -- 11. Notifications Table
 create table public.notifications (
   id uuid primary key default gen_random_uuid(),
@@ -267,11 +280,14 @@ create policy "Chat participants can view messages" on public.messages for selec
 );
 create policy "Chat participants can send messages" on public.messages for insert with check (
   sender_id = auth.uid() and
-  exists (
-    select 1 from public.chats 
-    join public.orders on orders.id = chats.order_id
-    where chats.id = chat_id 
-    and (orders.pelanggan_id = auth.uid() or orders.teknisi_id = auth.uid())
+  (
+    exists (
+      select 1 from public.chats 
+      join public.orders on orders.id = chats.order_id
+      where chats.id = chat_id 
+      and (orders.pelanggan_id = auth.uid() or orders.teknisi_id = auth.uid())
+    )
+    or exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
   )
 );
 
@@ -280,6 +296,16 @@ create policy "Anyone can read reviews" on public.reviews for select using (true
 create policy "Customers can write a review for their completed order" on public.reviews for insert with check (
   auth.uid() = pelanggan_id and 
   exists (select 1 from public.orders where orders.id = order_id and orders.status = 'selesai')
+);
+
+-- Customer Reports Policies
+create policy "Customers can view their own reports" on public.customer_reports for select using (auth.uid() = pelanggan_id);
+create policy "Customers can create reports" on public.customer_reports for insert with check (auth.uid() = pelanggan_id);
+create policy "Admins can view all reports" on public.customer_reports for select using (
+  exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
+);
+create policy "Admins can update reports" on public.customer_reports for update using (
+  exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
 );
 
 -- Notifications Policies

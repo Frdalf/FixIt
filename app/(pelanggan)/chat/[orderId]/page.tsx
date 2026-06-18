@@ -9,7 +9,7 @@ import { useRealtimeChat } from '@/hooks/useRealtimeChat'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent } from '@/components/ui/card'
-import { ChevronLeft, Send, Laptop, Loader2 } from 'lucide-react'
+import { ChevronLeft, Send, Laptop, Loader2, Shield } from 'lucide-react'
 import { format } from 'date-fns'
 import { id } from 'date-fns/locale'
 
@@ -152,6 +152,8 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
         ) : (
           messages.map((msg) => {
             const isMe = msg.sender_id === user?.id
+            const isAdmin = !isMe && msg.sender_id !== chat.orders?.teknisi_id
+
             return (
               <div
                 key={msg.id}
@@ -161,9 +163,16 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
                   className={`max-w-[80%] rounded-2xl p-3 shadow-sm text-xs sm:text-sm leading-relaxed ${
                     isMe
                       ? 'bg-blue-900 text-white rounded-br-none'
-                      : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-none border border-slate-100 dark:border-slate-700'
+                      : isAdmin
+                        ? 'bg-rose-50 dark:bg-rose-950/40 text-slate-800 dark:text-slate-100 border border-rose-200 dark:border-rose-900/50 rounded-bl-none'
+                        : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-none border border-slate-100 dark:border-slate-700'
                   }`}
                 >
+                  {isAdmin && (
+                    <div className="text-[10px] font-bold text-rose-600 dark:text-rose-400 mb-1 flex items-center gap-1">
+                      <Shield className="h-3 w-3" /> Admin FixIT
+                    </div>
+                  )}
                   <p>{msg.content}</p>
                   <div
                     className={`text-[9px] mt-1.5 text-right font-medium ${

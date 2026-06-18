@@ -23,6 +23,7 @@ import {
   Sparkles,
   Shield,
   Loader2,
+  AlertTriangle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -72,6 +73,12 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
   const [loading, setLoading] = useState(true)
   const [cancelReason, setCancelReason] = useState('')
   const [showCancelDialog, setShowCancelDialog] = useState(false)
+  
+  // States for reporting
+  const [showReportDialog, setShowReportDialog] = useState(false)
+  const [reportSubject, setReportSubject] = useState('')
+  const [reportDesc, setReportDesc] = useState('')
+  const [isSubmittingReport, setIsSubmittingReport] = useState(false)
 
   const fetchOrderDetails = async () => {
     try {
@@ -183,6 +190,43 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
       fetchOrderDetails()
     } catch (err: any) {
       toast.error(err.message || 'Gagal membatalkan pesanan')
+    }
+  }
+
+  const handleSubmitReport = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!reportSubject.trim() || !reportDesc.trim()) {
+      toast.error('Harap lengkapi topik dan detail laporan')
+      return
+    }
+
+    setIsSubmittingReport(true)
+    try {
+      const supabase = createClient()
+      
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      if (userError || !user) throw new Error('Anda harus masuk untuk melapor')
+
+      const { error } = await supabase
+        .from('customer_reports')
+        .insert({
+          pelanggan_id: user.id,
+          order_id: orderId,
+          subject: reportSubject,
+          description: reportDesc,
+          status: 'pending'
+        })
+
+      if (error) throw error
+
+      toast.success('Laporan terkirim! Admin akan merespons di ruang obrolan Anda.')
+      setShowReportDialog(false)
+      setReportSubject('')
+      setReportDesc('')
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal mengirim laporan')
+    } finally {
+      setIsSubmittingReport(false)
     }
   }
 
@@ -447,6 +491,19 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
             </Button>
           )}
         </div>
+
+        {/* Report Issue Button */}
+        {!isCancelled && (
+           <div className="flex justify-center mt-4 pt-6">
+             <button
+               onClick={() => setShowReportDialog(true)}
+               className="text-[11px] font-bold text-slate-400 hover:text-amber-600 dark:text-slate-500 dark:hover:text-amber-500 transition-colors flex items-center gap-1.5"
+             >
+               <AlertTriangle className="h-3.5 w-3.5" />
+               Ada kendala dengan pesanan ini? Laporkan Masalah
+             </button>
+           </div>
+        )}
       </div>
 
       {/* Cancel Order Dialog Modal */}
@@ -480,6 +537,74 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
                 Konfirmasi Batal
               </Button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Report Issue Dialog Modal */}
+      {showReportDialog && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm p-6 space-y-4 border border-slate-100 dark:border-slate-800 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-500 rounded-full flex items-center justify-center shrink-0">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg font-heading">Laporkan Kendala</h3>
+            </div>
+            
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Tim Admin kami akan membantu menyelesaikan masalah Anda. Balasan dari Admin akan masuk ke ruang Chat pesanan ini.
+            </p>
+            
+            <form onSubmit={handleSubmitReport} className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Topik Kendala</label>
+                <select
+                  value={reportSubject}
+                  onChange={(e) => setReportSubject(e.target.value)}
+                  className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 rounded-xl p-3 text-xs focus:outline-blue-500 focus:ring-1 focus:ring-blue-500"
+                  required
+                >
+                  <option value="" disabled>Pilih topik kendala...</option>
+                  <option value="Teknisi tidak bisa dihubungi">Teknisi tidak bisa dihubungi</option>
+                  <option value="Teknisi terlambat / tidak datang">Teknisi terlambat / tidak datang</option>
+                  <option value="Masalah pada perangkat setelah diservis">Masalah pada perangkat setelah diservis</option>
+                  <option value="Kendala pembayaran">Kendala pembayaran</option>
+                  <option value="Lainnya">Lainnya...</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">Detail Kendala</label>
+                <textarea
+                  rows={4}
+                  value={reportDesc}
+                  onChange={(e) => setReportDesc(e.target.value)}
+                  className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 rounded-xl p-3 text-xs focus:outline-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
+                  placeholder="Ceritakan detail masalah yang Anda alami secara lengkap..."
+                  required
+                />
+              </div>
+              
+              <div className="flex items-center gap-2 pt-3">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setShowReportDialog(false)}
+                  className="w-1/2 rounded-xl text-slate-500 dark:text-slate-400"
+                  disabled={isSubmittingReport}
+                >
+                  Batal
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmittingReport}
+                  className="w-1/2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl"
+                >
+                  {isSubmittingReport ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Kirim Laporan'}
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { LayoutDashboard, ClipboardList, Users, Settings, LogOut, Laptop } from 'lucide-react'
+import { LayoutDashboard, ClipboardList, Users, Settings, LogOut, Laptop, Flag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
 import { ThemeToggle } from '@/components/shared/ThemeToggle'
@@ -12,6 +12,7 @@ import { ThemeToggle } from '@/components/shared/ThemeToggle'
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Kelola Pesanan', href: '/admin/orders', icon: ClipboardList },
+  { label: 'Laporan Customer', href: '/admin/reports', icon: Flag },
   { label: 'Verifikasi Teknisi', href: '/admin/users/teknisi', icon: Users },
   { label: 'Kelola Layanan', href: '/admin/services', icon: Settings },
 ]
