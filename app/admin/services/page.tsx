@@ -200,8 +200,8 @@ export default function AdminServicesPage() {
       {/* Services List */}
       <div className="grid gap-4">
         {filteredServices.length === 0 ? (
-          <div className="text-center py-16 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-900 rounded-2xl p-6 text-slate-500 space-y-3">
-            <Wrench className="h-8 w-8 text-slate-450 dark:text-slate-700 mx-auto" />
+          <div className="text-center py-16 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-900 rounded-2xl p-6 text-slate-500 dark:text-slate-400 space-y-3">
+            <Wrench className="h-8 w-8 text-slate-400 dark:text-slate-500 mx-auto" />
             <div className="text-sm font-medium">Belum ada layanan aktif untuk kategori ini</div>
           </div>
         ) : (
@@ -216,7 +216,7 @@ export default function AdminServicesPage() {
               <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1.5 flex-1">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-slate-800 dark:text-slate-150 font-heading text-sm sm:text-base">
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100 font-heading text-sm sm:text-base">
                       {svc.name}
                     </h3>
                     {!svc.is_active && (
@@ -226,12 +226,12 @@ export default function AdminServicesPage() {
                     )}
                   </div>
                   {svc.description && (
-                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-xl">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">
                       {svc.description}
                     </p>
                   )}
                   {svc.duration_est && (
-                    <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-450 font-semibold pt-1">
+                    <div className="flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400 font-semibold pt-1">
                       <Clock className="h-3.5 w-3.5" />
                       Estimasi: {svc.duration_est}
                     </div>
@@ -240,7 +240,7 @@ export default function AdminServicesPage() {
 
                 <div className="flex items-center justify-between sm:justify-end gap-6 shrink-0 pt-2 sm:pt-0">
                   <div className="text-right">
-                    <div className="text-[10px] text-slate-500 dark:text-slate-450 font-bold uppercase">Rentang Harga</div>
+                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Rentang Harga</div>
                     <div className="text-xs sm:text-sm font-bold text-red-500 font-heading mt-0.5">
                       {formatPrice(svc.price_min)} - {formatPrice(svc.price_max)}
                     </div>
@@ -353,7 +353,7 @@ export default function AdminServicesPage() {
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="w-1/2 bg-red-650 hover:bg-red-750 text-white font-semibold rounded-xl"
+                  className="w-1/2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl"
                 >
                   {saving ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
