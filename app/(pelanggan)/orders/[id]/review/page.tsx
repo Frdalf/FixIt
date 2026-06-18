@@ -80,26 +80,11 @@ export default function ReviewOrderPage({ params }: { params: { id: string } }) 
 
       if (error) throw error
 
-      // Update average rating and total jobs for technician in public background or simple script
+      // Update average rating and total jobs for technician using admin API route
       if (order.teknisi_id) {
-        // Fetch all reviews for this technician
-        const { data: allReviews } = await supabase
-          .from('reviews')
-          .select('rating')
-          .eq('teknisi_id', order.teknisi_id)
-
-        if (allReviews && allReviews.length > 0) {
-          const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0)
-          const newAvg = Number((totalRating / allReviews.length).toFixed(2))
-
-          await supabase
-            .from('teknisi_profiles')
-            .update({
-              rating_avg: newAvg,
-              total_jobs: allReviews.length,
-            })
-            .eq('id', order.teknisi_id)
-        }
+        await fetch(`/api/technicians/${order.teknisi_id}/recalculate-rating`, {
+          method: 'POST'
+        }).catch(err => console.warn('Failed to call recalculate rating API', err))
       }
 
       toast.success('Ulasan berhasil dikirim!')
