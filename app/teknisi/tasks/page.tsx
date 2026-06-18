@@ -25,6 +25,7 @@ import {
 import { cn } from '@/lib/utils'
 
 const STATUS_METADATA: Record<string, { label: string; color: string }> = {
+  menunggu: { label: 'Menunggu Konfirmasi', color: 'bg-amber-100 text-amber-800' },
   dikonfirmasi: { label: 'Tugas Baru', color: 'bg-blue-100 text-blue-800' },
   berangkat: { label: 'Otw Lokasi', color: 'bg-indigo-100 text-indigo-800' },
   diproses: { label: 'Sedang Diservis', color: 'bg-purple-100 text-purple-800' },
@@ -196,7 +197,7 @@ export default function TeknisiTasksPage() {
   // Filter tasks based on active vs completed
   const filteredTasks = tasks.filter((t) => {
     if (activeTab === 'active') {
-      return ['dikonfirmasi', 'berangkat', 'diproses'].includes(t.status)
+      return ['menunggu', 'dikonfirmasi', 'berangkat', 'diproses'].includes(t.status)
     } else {
       return ['selesai', 'dibatalkan'].includes(t.status)
     }
@@ -263,7 +264,7 @@ export default function TeknisiTasksPage() {
                 : 'border-transparent text-slate-450 hover:text-slate-700'
             )}
           >
-            Aktif ({tasks.filter((t) => ['dikonfirmasi', 'berangkat', 'diproses'].includes(t.status)).length})
+            Aktif ({tasks.filter((t) => ['menunggu', 'dikonfirmasi', 'berangkat', 'diproses'].includes(t.status)).length})
           </button>
           <button
             onClick={() => setActiveTab('completed')}
@@ -354,11 +355,12 @@ export default function TeknisiTasksPage() {
                     </Link>
 
                     {/* Action button to change job status */}
-                    {['dikonfirmasi', 'berangkat', 'diproses'].includes(task.status) && (
+                    {['menunggu', 'dikonfirmasi', 'berangkat', 'diproses'].includes(task.status) && (
                       <Button
                         onClick={() => handleUpdateTaskStatus(task.id, task.status)}
                         className="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl py-5"
                       >
+                        {task.status === 'menunggu' && 'Terima Order'}
                         {task.status === 'dikonfirmasi' && 'Mulai Jalan'}
                         {task.status === 'berangkat' && 'Sampai & Mulai'}
                         {task.status === 'diproses' && 'Selesaikan'}
