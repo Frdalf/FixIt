@@ -73,6 +73,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  // Inactivity timeout effect
+  useEffect(() => {
+    if (!user) return
+
+    let timeoutId: NodeJS.Timeout
+
+    const resetTimer = () => {
+      clearTimeout(timeoutId)
+      // 1 hour = 3600000 ms
+      timeoutId = setTimeout(() => {
+        const role = profile?.role
+        signOut()
+        if (role === 'admin') {
+          window.location.href = '/admin/login?expired=true'
+        } else if (role === 'teknisi') {
+          window.location.href = '/teknisi/login?expired=true'
+        } else {
+          window.location.href = '/login?expired=true'
+        }
+      }, 3600000)
+    }
+
+    const events = ['mousemove', 'keydown', 'scroll', 'click', 'touchstart']
+    
+    // Throttle the event listeners to reduce performance impact
+    let isThrottled = false
+    const handleActivity = () => {
+      if (!isThrottled) {
+        resetTimer()
+        isThrottled = true
+        setTimeout(() => { isThrottled = false }, 1000) // update timer at most once a second
+      }
+    }
+
+    resetTimer()
+    events.forEach(event => window.addEventListener(event, handleActivity, { passive: true }))
+
+    return () => {
+      clearTimeout(timeoutId)
+      events.forEach(event => window.removeEventListener(event, handleActivity))
+    }
+  }, [user])
+
   const signOut = async () => {
     setLoading(true)
     await supabase.auth.signOut()

@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
@@ -18,6 +19,16 @@ function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectPath = searchParams.get('next') || '/'
+
+  useEffect(() => {
+    if (searchParams.get('expired') === 'true') {
+      toast.error('Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan login kembali.')
+      // Remove expired from URL without reloading
+      const url = new URL(window.location.href)
+      url.searchParams.delete('expired')
+      window.history.replaceState({}, '', url.toString())
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()

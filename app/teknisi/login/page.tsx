@@ -27,7 +27,14 @@ function TeknisiLoginForm() {
         'Akun Anda belum aktif. Harap tunggu verifikasi dari Admin sebelum dapat masuk ke dashboard teknisi.'
       )
     }
-  }, [errorQuery])
+    
+    if (searchParams.get('expired') === 'true') {
+      toast.error('Sesi Anda telah berakhir karena tidak ada aktivitas. Silakan login kembali.')
+      const url = new URL(window.location.href)
+      url.searchParams.delete('expired')
+      window.history.replaceState({}, '', url.toString())
+    }
+  }, [errorQuery, searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
