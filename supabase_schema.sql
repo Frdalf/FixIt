@@ -265,7 +265,7 @@ create policy "Participants can create chats" on public.chats for insert with ch
   exists (
     select 1 from public.orders 
     where orders.id = order_id 
-    and (orders.pelanggan_id = auth.uid() or orders.teknisi_id = auth.uid())
+    and (orders.pelanggan_id = auth.uid() or orders.teknisi_id = auth.uid() or exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'))
   )
 );
 
