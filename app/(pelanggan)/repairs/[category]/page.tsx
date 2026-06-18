@@ -72,12 +72,12 @@ export default function ServiceCategoryListingPage({
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-4xl space-y-4">
-        <div className="h-6 w-32 bg-slate-100 animate-pulse rounded-lg" />
-        <div className="h-10 w-64 bg-slate-100 animate-pulse rounded-lg" />
+        <div className="h-6 w-32 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-lg" />
+        <div className="h-10 w-64 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-lg" />
         <div className="space-y-3 pt-6">
-          <div className="h-24 bg-slate-100 animate-pulse rounded-2xl" />
-          <div className="h-24 bg-slate-100 animate-pulse rounded-2xl" />
-          <div className="h-24 bg-slate-100 animate-pulse rounded-2xl" />
+          <div className="h-24 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-2xl" />
+          <div className="h-24 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-2xl" />
+          <div className="h-24 bg-slate-100 dark:bg-slate-800 animate-pulse rounded-2xl" />
         </div>
       </div>
     )
@@ -86,8 +86,8 @@ export default function ServiceCategoryListingPage({
   if (services.length === 0) {
     return (
       <div className="container mx-auto px-4 py-16 text-center space-y-4 max-w-md">
-        <h2 className="text-xl font-bold font-heading">Kategori Tidak Ditemukan</h2>
-        <p className="text-sm text-slate-500">
+        <h2 className="text-xl font-bold font-heading dark:text-slate-100">Kategori Tidak Ditemukan</h2>
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Kategori servis laptop "{categorySlug}" tidak ditemukan atau belum aktif.
         </p>
         <Link href="/repairs" className="inline-block pt-2">
@@ -108,17 +108,17 @@ export default function ServiceCategoryListingPage({
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl pb-32">
       <div className="flex items-center gap-2 mb-6">
-        <Link href="/repairs" className="text-slate-500 hover:text-slate-800 transition-colors">
+        <Link href="/repairs" className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition-colors">
           <ChevronLeft className="h-5 w-5" />
         </Link>
-        <span className="text-sm text-slate-500">Kembali ke Kategori</span>
+        <span className="text-sm text-slate-500 dark:text-slate-400">Kembali ke Kategori</span>
       </div>
 
       <div className="space-y-2 mb-8">
-        <h1 className="text-2xl md:text-3xl font-extrabold font-heading text-slate-800">
+        <h1 className="text-2xl md:text-3xl font-extrabold font-heading text-slate-800 dark:text-slate-100">
           Servis {categoryName}
         </h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Pilih salah satu atau beberapa layanan perbaikan yang Anda butuhkan
         </p>
       </div>
@@ -131,15 +131,15 @@ export default function ServiceCategoryListingPage({
               key={svc.id}
               onClick={() => toggleService(svc)}
               className={cn(
-                'border-slate-100 hover:border-blue-150 transition-all rounded-2xl cursor-pointer select-none active:scale-[0.99]',
-                isSelected ? 'border-blue-500 bg-blue-50/20 ring-1 ring-blue-500' : ''
+                'border-slate-100 dark:border-slate-800 hover:border-blue-150 dark:hover:border-blue-500 transition-all rounded-2xl cursor-pointer select-none active:scale-[0.99]',
+                isSelected ? 'border-blue-500 bg-blue-50/20 dark:bg-blue-900/20 ring-1 ring-blue-500' : 'bg-white dark:bg-slate-900'
               )}
             >
               <CardContent className="p-5 flex items-start gap-4">
                 <div
                   className={cn(
                     'mt-1 h-5 w-5 rounded-md border flex items-center justify-center transition-colors shrink-0',
-                    isSelected ? 'border-blue-500 bg-blue-500 text-white' : 'border-slate-300 bg-white'
+                    isSelected ? 'border-blue-500 bg-blue-500 text-white' : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'
                   )}
                 >
                   {isSelected && <Check className="h-3.5 w-3.5 stroke-[3px]" />}
@@ -147,22 +147,22 @@ export default function ServiceCategoryListingPage({
 
                 <div className="flex-1 space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                    <h3 className="font-bold text-slate-800 text-sm sm:text-base font-heading">
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base font-heading">
                       {svc.name}
                     </h3>
-                    <div className="text-sm font-semibold text-blue-900 shrink-0">
+                    <div className="text-sm font-semibold text-blue-900 dark:text-blue-400 shrink-0">
                       {formatPrice(svc.price_min)} - {formatPrice(svc.price_max)}
                     </div>
                   </div>
                   
                   {svc.description && (
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                       {svc.description}
                     </p>
                   )}
 
                   {svc.duration_est && (
-                    <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium pt-1">
+                    <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 font-medium pt-1">
                       <Clock className="h-3 w-3" />
                       Estimasi Pengerjaan: {svc.duration_est}
                     </div>
@@ -177,14 +177,14 @@ export default function ServiceCategoryListingPage({
       {/* Floating Checkout Summary Panel */}
       {selectedServices.length > 0 && (
         <div className="fixed bottom-16 md:bottom-4 left-0 right-0 z-40 px-4">
-          <div className="container mx-auto max-w-4xl bg-white border border-slate-150 shadow-2xl rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in slide-in-from-bottom-5 duration-200">
+          <div className="container mx-auto max-w-4xl bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 shadow-2xl rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in slide-in-from-bottom-5 duration-200">
             <div className="flex items-center gap-3">
-              <div className="bg-blue-50 text-blue-900 p-2.5 rounded-xl text-center font-bold text-xs shrink-0">
+              <div className="bg-blue-50 dark:bg-blue-900/40 text-blue-900 dark:text-blue-300 p-2.5 rounded-xl text-center font-bold text-xs shrink-0">
                 {selectedServices.length} <span className="block text-[8px] font-normal uppercase">Layanan</span>
               </div>
               <div>
-                <div className="text-[10px] text-slate-600 font-medium">Estimasi Subtotal</div>
-                <div className="text-base font-bold text-blue-900 font-heading">
+                <div className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">Estimasi Subtotal</div>
+                <div className="text-base font-bold text-blue-900 dark:text-blue-400 font-heading">
                   {formatPrice(getSubtotal())}
                 </div>
               </div>
@@ -193,7 +193,7 @@ export default function ServiceCategoryListingPage({
               <Button
                 variant="outline"
                 onClick={() => useCheckoutStore.getState().clearCart()}
-                className="w-1/3 sm:w-auto border-slate-200 text-slate-600 hover:text-slate-800 rounded-xl"
+                className="w-1/3 sm:w-auto border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded-xl"
               >
                 Reset
               </Button>
@@ -209,8 +209,8 @@ export default function ServiceCategoryListingPage({
 
       {/* Helper Tip */}
       {selectedServices.length === 0 && (
-        <div className="mt-8 bg-slate-50 border border-slate-100 p-4 rounded-2xl flex gap-3 text-xs text-slate-600 max-w-xl mx-auto">
-          <Info className="h-5 w-5 text-blue-900 shrink-0 mt-0.5" />
+        <div className="mt-8 bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 p-4 rounded-2xl flex gap-3 text-xs text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+          <Info className="h-5 w-5 text-blue-900 dark:text-blue-400 shrink-0 mt-0.5" />
           <p className="leading-relaxed">
             Anda dapat memilih lebih dari satu layanan perbaikan sekaligus (misal: Ganti Keyboard + Deep Clean). Biaya admin tetap sama per sekali kunjungan teknisi.
           </p>
