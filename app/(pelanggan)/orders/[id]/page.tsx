@@ -430,7 +430,7 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
 
           {/* Show review completed status if reviews exists */}
           {currentStatus === 'selesai' && order.reviews && (
-            <div className="w-full bg-emerald-50 border border-emerald-100 rounded-xl p-3.5 flex items-center justify-center gap-2 text-emerald-850 font-bold text-xs">
+            <div className="w-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/50 rounded-xl p-3.5 flex items-center justify-center gap-2 text-emerald-800 dark:text-emerald-400 font-bold text-xs">
               <CheckCircle className="h-5 w-5 text-emerald-500 shrink-0" />
               <span>Terima kasih! Anda telah memberikan ulasan.</span>
             </div>
