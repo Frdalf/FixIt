@@ -306,6 +306,8 @@ export default function TeknisiTasksPage() {
         ) : (
           filteredTasks.map((task) => {
             const meta = STATUS_METADATA[task.status] || { label: task.status, color: 'bg-slate-100 text-slate-800' }
+            const review = Array.isArray(task.reviews) ? task.reviews[0] : task.reviews;
+
             return (
               <Card key={task.id} className="border-slate-100 dark:border-slate-800 hover:shadow-sm transition-all rounded-2xl bg-white dark:bg-slate-900 overflow-hidden">
                 <CardContent className="p-5 space-y-4">
@@ -351,7 +353,7 @@ export default function TeknisiTasksPage() {
                   </div>
 
                   {/* Review / Rating Snapshot */}
-                  {task.status === 'selesai' && task.reviews && task.reviews.length > 0 && (
+                  {task.status === 'selesai' && review && (
                     <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded-xl border border-amber-100 dark:border-amber-900 space-y-1.5">
                       <div className="flex items-center gap-2">
                         <div className="flex">
@@ -360,7 +362,7 @@ export default function TeknisiTasksPage() {
                               key={star}
                               className={cn(
                                 "h-3.5 w-3.5",
-                                star <= task.reviews[0].rating
+                                star <= review.rating
                                   ? "fill-amber-500 text-amber-500"
                                   : "text-slate-300 dark:text-slate-700"
                               )}
@@ -371,9 +373,9 @@ export default function TeknisiTasksPage() {
                           Ulasan Pelanggan
                         </span>
                       </div>
-                      {task.reviews[0].comment && (
+                      {review.comment && (
                         <p className="text-xs text-amber-800/80 dark:text-amber-400/80 italic leading-relaxed">
-                          "{task.reviews[0].comment}"
+                          "{review.comment}"
                         </p>
                       )}
                     </div>
