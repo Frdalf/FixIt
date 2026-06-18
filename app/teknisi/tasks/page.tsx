@@ -144,11 +144,15 @@ export default function TeknisiTasksPage() {
     }
   }
 
-  const handleUpdateTaskStatus = async (taskId: string, currentStatus: string) => {
+  const handleUpdateTaskStatus = async (taskId: string, currentStatus: string, isConsultation: boolean = false) => {
     let nextStatus = 'dikonfirmasi'
-    if (currentStatus === 'dikonfirmasi') nextStatus = 'berangkat'
-    else if (currentStatus === 'berangkat') nextStatus = 'diproses'
-    else if (currentStatus === 'diproses') nextStatus = 'selesai'
+    if (isConsultation) {
+      if (currentStatus === 'dikonfirmasi') nextStatus = 'selesai'
+    } else {
+      if (currentStatus === 'dikonfirmasi') nextStatus = 'berangkat'
+      else if (currentStatus === 'berangkat') nextStatus = 'diproses'
+      else if (currentStatus === 'diproses') nextStatus = 'selesai'
+    }
 
     try {
       const supabase = createClient()
@@ -368,11 +372,11 @@ export default function TeknisiTasksPage() {
                     {/* Action button to change job status */}
                     {['menunggu', 'dikonfirmasi', 'berangkat', 'diproses'].includes(task.status) && (
                       <Button
-                        onClick={() => handleUpdateTaskStatus(task.id, task.status)}
+                        onClick={() => handleUpdateTaskStatus(task.id, task.status, task.device_name === 'Konsultasi Online')}
                         className="flex-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl py-5"
                       >
                         {task.status === 'menunggu' && 'Terima Order'}
-                        {task.status === 'dikonfirmasi' && 'Mulai Jalan'}
+                        {task.status === 'dikonfirmasi' && (task.device_name === 'Konsultasi Online' ? 'Selesaikan Konsultasi' : 'Mulai Jalan')}
                         {task.status === 'berangkat' && 'Sampai & Mulai'}
                         {task.status === 'diproses' && 'Selesaikan'}
                       </Button>
