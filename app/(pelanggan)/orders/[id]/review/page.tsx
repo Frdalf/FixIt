@@ -101,9 +101,9 @@ export default function ReviewOrderPage({ params }: { params: { id: string } }) 
 
   if (!order) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-900" />
-        <span className="text-sm text-slate-500 font-medium mt-2">Memuat data order...</span>
+      <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-900 dark:text-blue-500" />
+        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-2">Memuat data order...</span>
       </div>
     )
   }
@@ -111,15 +111,15 @@ export default function ReviewOrderPage({ params }: { params: { id: string } }) 
   return (
     <div className="container mx-auto px-4 py-8 max-w-md pb-24">
       <div className="flex items-center gap-2 mb-6">
-        <Link href={`/orders/${orderId}`} className="text-slate-500 hover:text-slate-800 transition-colors">
+        <Link href={`/orders/${orderId}`} className="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors">
           <ChevronLeft className="h-5 w-5" />
         </Link>
-        <span className="text-sm text-slate-500 font-medium">Batal</span>
+        <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Batal</span>
       </div>
 
-      <Card className="border-slate-100 shadow-sm rounded-2xl">
-        <CardHeader className="text-center pb-4 border-b border-slate-50">
-          <CardTitle className="text-lg font-bold font-heading text-slate-800">
+      <Card className="border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm rounded-2xl">
+        <CardHeader className="text-center pb-4 border-b border-slate-50 dark:border-slate-800/50">
+          <CardTitle className="text-lg font-bold font-heading text-slate-800 dark:text-slate-100">
             Beri Ulasan Perbaikan
           </CardTitle>
           <CardDescription>
@@ -130,13 +130,13 @@ export default function ReviewOrderPage({ params }: { params: { id: string } }) 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Display device name */}
             <div className="text-center">
-              <span className="text-xs text-slate-500 uppercase tracking-wide">Perangkat yang Diservis</span>
-              <h3 className="font-bold text-sm text-slate-800 font-heading mt-0.5">{order.device_name}</h3>
+              <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide">Perangkat yang Diservis</span>
+              <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 font-heading mt-0.5">{order.device_name}</h3>
             </div>
 
             {/* Star Rating Selector */}
             <div className="space-y-2 flex flex-col items-center">
-              <Label className="text-slate-700 font-semibold text-center mb-1">Kualitas Pekerjaan & Sikap Teknisi</Label>
+              <Label className="text-slate-700 dark:text-slate-200 font-semibold text-center mb-1">Kualitas Pekerjaan & Sikap Teknisi</Label>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => {
                   const isActive = (hoverRating !== null ? hoverRating : rating) >= star
@@ -154,14 +154,14 @@ export default function ReviewOrderPage({ params }: { params: { id: string } }) 
                           'h-9 w-9 transition-colors',
                           isActive
                             ? 'fill-amber-500 stroke-amber-500'
-                            : 'fill-transparent stroke-slate-300'
+                            : 'fill-transparent stroke-slate-300 dark:stroke-slate-700'
                         )}
                       />
                     </button>
                   )
                 })}
               </div>
-              <span className="text-xs text-slate-500 font-bold uppercase pt-1">
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase pt-1">
                 {rating === 5 && 'Sangat Puas'}
                 {rating === 4 && 'Puas'}
                 {rating === 3 && 'Cukup'}
@@ -172,13 +172,13 @@ export default function ReviewOrderPage({ params }: { params: { id: string } }) 
 
             {/* Comment Area */}
             <div className="space-y-2">
-              <Label htmlFor="comment" className="text-slate-700">Tulis Komentar Anda</Label>
+              <Label htmlFor="comment" className="text-slate-700 dark:text-slate-200">Tulis Komentar Anda</Label>
               <textarea
                 id="comment"
                 rows={4}
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                className="w-full text-xs sm:text-sm border border-slate-200 rounded-xl p-3 focus:outline-blue-500 focus:ring-1 focus:ring-blue-500 resize-none"
+                className="w-full text-xs sm:text-sm border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-blue-500 focus:ring-1 focus:ring-blue-500 resize-none bg-transparent dark:bg-slate-950 dark:text-slate-100"
                 placeholder="Bagikan pengalaman servis Anda (misal: pengerjaan rapi, penjelasan detail, ramah)..."
                 required
               />
