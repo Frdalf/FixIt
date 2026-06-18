@@ -203,8 +203,8 @@ export default function AdminTeknisiManagementPage() {
                       className={cn(
                         'w-full sm:w-auto font-bold rounded-xl text-xs py-5 px-5 flex items-center justify-center gap-1.5 transition-colors',
                         isActive
-                          ? 'border border-slate-200 dark:border-slate-800 bg-transparent text-slate-500 dark:text-slate-400 hover:text-slate-950 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-900/50'
-                          : 'bg-red-650 hover:bg-red-750 text-white'
+                          ? 'border border-rose-200 dark:border-rose-900 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-950/40'
+                          : 'bg-red-600 hover:bg-red-700 text-white shadow-sm'
                       )}
                     >
                       {isVerifying ? (
