@@ -48,7 +48,9 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
           }
           setChat(chatData)
         } else if (error) {
-          setFetchError(error)
+          if (error.code !== 'PGRST116') {
+            setFetchError(error)
+          }
         }
       } catch (err) {
         console.warn('Error fetching chat session details. Simulating for development.', err)

@@ -164,6 +164,17 @@ export default function TeknisiTasksPage() {
 
       if (error) throw error
 
+      // Jika teknisi menerima orderan, buat ruang chat
+      if (nextStatus === 'dikonfirmasi') {
+        const { error: chatError } = await supabase
+          .from('chats')
+          .insert({ order_id: taskId })
+          
+        if (chatError && chatError.code !== '23505') {
+          console.warn('Gagal membuat ruang chat:', chatError)
+        }
+      }
+
       // If service is marked finished, set technician status back to tersedia
       if (nextStatus === 'selesai') {
         await supabase

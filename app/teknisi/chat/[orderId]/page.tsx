@@ -45,6 +45,10 @@ export default function TeknisiChatRoomPage({ params }: { params: { orderId: str
             chatData.orders.pelanggan = pelangganProfile
           }
           setChat(chatData)
+        } else if (error) {
+          if (error.code !== 'PGRST116') {
+            setFetchError(error)
+          }
         }
       } catch (err) {
         console.warn('Error fetching chat session details. Simulating for development.', err)
