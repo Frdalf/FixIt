@@ -78,11 +78,31 @@ export default function AdminDashboardPage() {
           .eq('status', 'menunggu')
 
         // 5. Fetch recent orders
-        const { data: recent } = await supabase
+        const { data: recentRaw, error: recentError } = await supabase
           .from('orders')
-          .select('*, pelanggan:profiles(*)')
+          .select('*')
           .order('created_at', { ascending: false })
           .limit(5)
+          
+        let recent = recentRaw || []
+        
+        if (!recentError && recent.length > 0) {
+          const pelangganIds = [...new Set(recent.map((o: any) => o.pelanggan_id).filter(Boolean))]
+          if (pelangganIds.length > 0) {
+            const { data: profiles } = await supabase
+              .from('profiles')
+              .select('*')
+              .in('id', pelangganIds)
+              
+            if (profiles) {
+              const profilesMap = Object.fromEntries(profiles.map(p => [p.id, p]))
+              recent = recent.map((o: any) => ({
+                ...o,
+                pelanggan: profilesMap[o.pelanggan_id] || null
+              }))
+            }
+          }
+        }
 
         // 6. Fetch system notifications (user_id = null, type = 'system')
         const { data: notifications } = await supabase
