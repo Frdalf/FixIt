@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { Laptop, ArrowRight, Loader2 } from 'lucide-react'
+import { Laptop, ArrowRight, ArrowLeft, Loader2 } from 'lucide-react'
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -132,7 +132,16 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 min-h-screen">
+    <div className="flex-1 flex flex-col items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 min-h-screen relative">
+      <Link 
+        href="/" 
+        className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        <span className="hidden sm:inline">Kembali ke Beranda</span>
+        <span className="sm:hidden">Kembali</span>
+      </Link>
+
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center gap-2 mb-6">
           <div className="bg-blue-900 dark:bg-blue-600 text-white p-2 rounded-xl">
