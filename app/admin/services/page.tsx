@@ -30,6 +30,7 @@ export default function AdminServicesPage() {
   
   // Edit Dialog State
   const [editingService, setEditingService] = useState<Service | null>(null)
+  const [isAdding, setIsAdding] = useState(false)
   const [editForm, setEditForm] = useState({
     name: '',
     description: '',
@@ -104,46 +105,63 @@ export default function AdminServicesPage() {
     })
   }
 
+  const openAddModal = () => {
+    setEditForm({
+      name: '',
+      description: '',
+      price_min: 0,
+      price_max: 0,
+      duration_est: '',
+    })
+    setIsAdding(true)
+  }
+
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!editingService) return
+    if (!editingService && !isAdding) return
     setSaving(true)
 
     try {
       const supabase = createClient()
-      const { error } = await supabase
-        .from('services')
-        .update({
-          name: editForm.name,
-          description: editForm.description,
-          price_min: Number(editForm.price_min),
-          price_max: Number(editForm.price_max),
-          duration_est: editForm.duration_est,
-        })
-        .eq('id', editingService.id)
+      
+      if (isAdding) {
+        const { error } = await supabase
+          .from('services')
+          .insert({
+            name: editForm.name,
+            description: editForm.description,
+            price_min: Number(editForm.price_min),
+            price_max: Number(editForm.price_max),
+            duration_est: editForm.duration_est,
+            category_id: activeCategory,
+            is_active: true
+          })
+          
+        if (error) throw error
+        toast.success('Layanan baru berhasil ditambahkan!')
+      } else if (editingService) {
+        const { error } = await supabase
+          .from('services')
+          .update({
+            name: editForm.name,
+            description: editForm.description,
+            price_min: Number(editForm.price_min),
+            price_max: Number(editForm.price_max),
+            duration_est: editForm.duration_est,
+          })
+          .eq('id', editingService.id)
 
-      if (error) throw error
-      toast.success('Data layanan berhasil diperbarui!')
+        if (error) throw error
+        toast.success('Data layanan berhasil diperbarui!')
+      }
+      
       setEditingService(null)
+      setIsAdding(false)
       loadServices()
-    } catch (err) {
-      // Local state simulation fallback
-      setServices((prev) =>
-        prev.map((s) =>
-          s.id === editingService.id
-            ? {
-                ...s,
-                name: editForm.name,
-                description: editForm.description,
-                price_min: Number(editForm.price_min),
-                price_max: Number(editForm.price_max),
-                duration_est: editForm.duration_est,
-              }
-            : s
-        )
-      )
-      toast.success('Simulasi edit layanan berhasil!')
+    } catch (err: any) {
+      toast.error('Gagal menyimpan layanan: ' + (err.message || 'Error'))
       setEditingService(null)
+      setIsAdding(false)
     } finally {
       setSaving(false)
     }
@@ -177,6 +195,14 @@ export default function AdminServicesPage() {
             Atur katalog layanan, rentang harga, estimasi waktu, dan status aktif
           </p>
         </div>
+        
+        <Button 
+          onClick={openAddModal}
+          className="bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl flex items-center gap-2 px-5 py-5"
+        >
+          <Plus className="h-4.5 w-4.5" />
+          Tambah Layanan
+        </Button>
       </div>
 
       {/* Category Tabs */}
@@ -275,11 +301,13 @@ export default function AdminServicesPage() {
         )}
       </div>
 
-      {/* Edit Service Dialog Modal */}
-      {editingService && (
+      {/* Edit/Add Service Dialog Modal */}
+      {(editingService || isAdding) && (
         <div className="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl w-full max-w-md p-6 space-y-4 border border-slate-200 dark:border-slate-800 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg font-heading">Edit Detail Layanan</h3>
+            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg font-heading">
+              {isAdding ? 'Tambah Layanan Baru' : 'Edit Detail Layanan'}
+            </h3>
             
             <form onSubmit={handleSaveEdit} className="space-y-4 text-xs sm:text-sm">
               <div className="space-y-2">
@@ -345,7 +373,7 @@ export default function AdminServicesPage() {
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => setEditingService(null)}
+                  onClick={() => { setEditingService(null); setIsAdding(false); }}
                   className="w-1/2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                 >
                   Batal
