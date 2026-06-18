@@ -21,6 +21,7 @@ import {
   Loader2,
   ToggleLeft,
   ToggleRight,
+  Star,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -60,7 +61,7 @@ export default function TeknisiTasksPage() {
       // 2. Fetch assigned tasks
       const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
-        .select('*, order_items(*), payments(*)')
+        .select('*, order_items(*), payments(*), reviews(*)')
         .eq('teknisi_id', user.id)
         .order('created_at', { ascending: false })
 
@@ -348,6 +349,35 @@ export default function TeknisiTasksPage() {
                       <span>{formatPrice(task.total)}</span>
                     </div>
                   </div>
+
+                  {/* Review / Rating Snapshot */}
+                  {task.status === 'selesai' && task.reviews && task.reviews.length > 0 && (
+                    <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded-xl border border-amber-100 dark:border-amber-900 space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <div className="flex">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={cn(
+                                "h-3.5 w-3.5",
+                                star <= task.reviews[0].rating
+                                  ? "fill-amber-500 text-amber-500"
+                                  : "text-slate-300 dark:text-slate-700"
+                              )}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-[11px] font-bold text-amber-700 dark:text-amber-500 uppercase tracking-wider">
+                          Ulasan Pelanggan
+                        </span>
+                      </div>
+                      {task.reviews[0].comment && (
+                        <p className="text-xs text-amber-800/80 dark:text-amber-400/80 italic leading-relaxed">
+                          "{task.reviews[0].comment}"
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Action Buttons based on Status */}
                   <div className="flex items-center gap-2 pt-2">
