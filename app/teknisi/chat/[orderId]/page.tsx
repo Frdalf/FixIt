@@ -20,6 +20,7 @@ export default function TeknisiChatRoomPage({ params }: { params: { orderId: str
   const [chat, setChat] = useState<any>(null)
   const [inputText, setInputText] = useState('')
   const [loading, setLoading] = useState(true)
+  const [fetchError, setFetchError] = useState<any>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Fetch chat metadata linked to this order
@@ -46,7 +47,34 @@ export default function TeknisiChatRoomPage({ params }: { params: { orderId: str
           }
           setChat(chatData)
         } else if (error) {
-          if (error.code !== 'PGRST116') {
+          if (error.code === 'PGRST116') {
+            // Auto-create chat if not exists
+            const { data: newChat, error: createError } = await supabase
+              .from('chats')
+              .insert({ order_id: orderId })
+              .select('*, orders!inner(*)')
+              .single()
+
+            if (!createError && newChat) {
+              if (newChat.orders?.pelanggan_id) {
+                const { data: pelangganProfile } = await supabase
+                  .from('profiles')
+                  .select('*')
+                  .eq('id', newChat.orders.pelanggan_id)
+                  .single()
+                newChat.orders.pelanggan = pelangganProfile
+              }
+              setChat(newChat)
+            } else {
+              // If race condition where it was just created, try fetch again, or just show error
+              if (createError?.code === '23505') {
+                 const { data: retryChat } = await supabase.from('chats').select('*, orders!inner(*)').eq('order_id', orderId).single()
+                 if (retryChat) setChat(retryChat)
+              } else {
+                 setFetchError(createError || new Error('Gagal membuat ruang chat baru'))
+              }
+            }
+          } else {
             setFetchError(error)
           }
         }

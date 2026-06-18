@@ -48,7 +48,34 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
           }
           setChat(chatData)
         } else if (error) {
-          if (error.code !== 'PGRST116') {
+          if (error.code === 'PGRST116') {
+            // Auto-create chat if not exists
+            const { data: newChat, error: createError } = await supabase
+              .from('chats')
+              .insert({ order_id: orderId })
+              .select('*, orders!inner(*)')
+              .single()
+
+            if (!createError && newChat) {
+              if (newChat.orders?.teknisi_id) {
+                const { data: techProfile } = await supabase
+                  .from('profiles')
+                  .select('*')
+                  .eq('id', newChat.orders.teknisi_id)
+                  .single()
+                newChat.orders.teknisi = techProfile
+              }
+              setChat(newChat)
+            } else {
+              // If race condition where it was just created, try fetch again, or just show error
+              if (createError?.code === '23505') {
+                 const { data: retryChat } = await supabase.from('chats').select('*, orders!inner(*)').eq('order_id', orderId).single()
+                 if (retryChat) setChat(retryChat)
+              } else {
+                 setFetchError(createError || new Error('Gagal membuat ruang chat baru'))
+              }
+            }
+          } else {
             setFetchError(error)
           }
         }
