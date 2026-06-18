@@ -16,6 +16,8 @@ import {
   Loader2,
   RefreshCw,
   UserCheck,
+  Ban,
+  XCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -34,6 +36,9 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true)
   const [assigningOrderId, setAssigningOrderId] = useState<string | null>(null)
   const [loadingAssign, setLoadingAssign] = useState<string | null>(null)
+  const [cancelOrderId, setCancelOrderId] = useState<string | null>(null)
+  const [cancelReason, setCancelReason] = useState('')
+  const [isCancelling, setIsCancelling] = useState(false)
 
   const fetchOrdersAndTechs = async () => {
     try {
@@ -211,6 +216,53 @@ export default function AdminOrdersPage() {
     }
   }
 
+  const handleAdminCancelOrder = async () => {
+    if (!cancelOrderId) return
+    if (!cancelReason.trim()) {
+      toast.error('Harap masukkan alasan pembatalan')
+      return
+    }
+
+    setIsCancelling(true)
+    try {
+      const supabase = createClient()
+      const formattedReason = `Dibatalkan oleh Admin: ${cancelReason}`
+      const { error } = await supabase
+        .from('orders')
+        .update({
+          status: 'dibatalkan',
+          cancelled_at: new Date().toISOString(),
+          cancel_reason: formattedReason,
+        })
+        .eq('id', cancelOrderId)
+
+      if (error) throw error
+
+      toast.success('Pesanan berhasil dibatalkan oleh Admin')
+      setCancelOrderId(null)
+      setCancelReason('')
+      fetchOrdersAndTechs()
+    } catch (err: any) {
+      toast.error(err.message || 'Gagal membatalkan pesanan')
+      // Fallback simulasi jika error
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.id === cancelOrderId
+            ? {
+                ...o,
+                status: 'dibatalkan',
+                cancel_reason: `Dibatalkan oleh Admin: ${cancelReason}`,
+              }
+            : o
+        )
+      )
+      setCancelOrderId(null)
+      setCancelReason('')
+    } finally {
+      setIsCancelling(false)
+    }
+  }
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -359,11 +411,82 @@ export default function AdminOrdersPage() {
                     )}
                   </div>
                 )}
+                
+                {/* Admin Cancel Control */}
+                {!['selesai', 'dibatalkan'].includes(order.status) && (
+                  <div className="pt-3 border-t border-slate-150 dark:border-slate-900 mt-3 flex justify-end">
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setCancelOrderId(order.id)
+                        setCancelReason('')
+                      }}
+                      className="text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 font-semibold rounded-xl text-xs flex items-center gap-1.5 px-3 py-1.5 h-auto"
+                    >
+                      <Ban className="h-3.5 w-3.5" />
+                      Batalkan Pesanan
+                    </Button>
+                  </div>
+                )}
+                
+                {order.status === 'dibatalkan' && order.cancel_reason && (
+                  <div className="pt-3 border-t border-slate-150 dark:border-slate-900 mt-3">
+                    <div className="bg-rose-50 dark:bg-rose-950/20 rounded-xl p-3 flex items-start gap-3">
+                      <XCircle className="h-5 w-5 text-rose-500 shrink-0" />
+                      <div>
+                        <div className="text-xs font-bold text-rose-800 dark:text-rose-400">Informasi Pembatalan</div>
+                        <div className="text-[11px] text-rose-600 dark:text-rose-500 mt-0.5">{order.cancel_reason}</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           )
         })}
       </div>
+
+      {/* Cancel Order Modal */}
+      {cancelOrderId && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl w-full max-w-sm p-6 space-y-4 border border-slate-100 dark:border-slate-800 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-500 rounded-full flex items-center justify-center shrink-0">
+                <Ban className="h-5 w-5" />
+              </div>
+              <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg font-heading">Batalkan Pesanan</h3>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Tindakan ini akan membatalkan pesanan. Alasan pembatalan ini akan terlihat oleh pelanggan di halaman lacak pesanan mereka.
+            </p>
+            <textarea
+              rows={3}
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              className="w-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 rounded-xl p-3 text-xs focus:outline-rose-500 focus:ring-1 focus:ring-rose-500 resize-none"
+              placeholder="Masukkan alasan pembatalan (misal: Teknisi tidak tersedia, pelanggan melanggar ketentuan...)"
+              required
+            />
+            <div className="flex items-center gap-2 pt-2">
+              <Button
+                variant="ghost"
+                onClick={() => setCancelOrderId(null)}
+                className="w-1/2 rounded-xl text-slate-500"
+                disabled={isCancelling}
+              >
+                Kembali
+              </Button>
+              <Button
+                onClick={handleAdminCancelOrder}
+                className="w-1/2 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl"
+                disabled={isCancelling}
+              >
+                {isCancelling ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Konfirmasi Batal'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
