@@ -121,18 +121,18 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
   const partnerName = chat.orders?.teknisi?.full_name || 'Teknisi FixIT'
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-64px)] md:h-screen max-w-2xl mx-auto bg-white border-x border-slate-100">
+    <div className="flex-1 flex flex-col h-[calc(100vh-64px)] md:h-screen max-w-2xl mx-auto bg-white dark:bg-slate-900 border-x border-slate-100 dark:border-slate-800">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between shrink-0 bg-slate-50/50">
+      <div className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-slate-900/50">
         <div className="flex items-center gap-3">
-          <Link href="/chat" className="text-slate-500 hover:text-slate-800 transition-colors">
+          <Link href="/chat" className="text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 transition-colors">
             <ChevronLeft className="h-6 w-6" />
           </Link>
-          <div className="h-10 w-10 rounded-full bg-blue-50 text-blue-900 font-bold flex items-center justify-center text-sm shadow-sm shrink-0">
+          <div className="h-10 w-10 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-900 dark:text-blue-300 font-bold flex items-center justify-center text-sm shadow-sm shrink-0">
             {partnerName.slice(0, 2).toUpperCase()}
           </div>
           <div>
-            <h2 className="font-bold text-slate-800 text-sm font-heading">{partnerName}</h2>
+            <h2 className="font-bold text-slate-800 dark:text-slate-100 text-sm font-heading">{partnerName}</h2>
             <div className="flex items-center gap-1 text-[10px] text-slate-500">
               <Laptop className="h-3 w-3" />
               <span>
@@ -144,7 +144,7 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
       </div>
 
       {/* Messages List Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/20">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/20 dark:bg-slate-950/20">
         {messages.length === 0 ? (
           <div className="text-center py-12 text-xs text-slate-400">
             Kirim pesan pertama untuk berkoordinasi dengan teknisi.
@@ -161,7 +161,7 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
                   className={`max-w-[80%] rounded-2xl p-3 shadow-sm text-xs sm:text-sm leading-relaxed ${
                     isMe
                       ? 'bg-blue-900 text-white rounded-br-none'
-                      : 'bg-white text-slate-800 rounded-bl-none border border-slate-100'
+                      : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-none border border-slate-100 dark:border-slate-700'
                   }`}
                 >
                   <p>{msg.content}</p>
@@ -181,12 +181,12 @@ export default function PelangganChatRoomPage({ params }: { params: { orderId: s
       </div>
 
       {/* Input Message Footer */}
-      <form onSubmit={handleSend} className="p-3 border-t border-slate-100 flex items-center gap-2 shrink-0 bg-white">
+      <form onSubmit={handleSend} className="p-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2 shrink-0 bg-white dark:bg-slate-900">
         <Input
           placeholder="Tulis pesan..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          className="rounded-xl border-slate-200 text-xs sm:text-sm py-5"
+          className="rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 text-xs sm:text-sm py-5"
           required
         />
         <Button
