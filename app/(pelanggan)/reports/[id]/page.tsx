@@ -99,7 +99,7 @@ export default function PelangganReportDetailPage({ params }: { params: { id: st
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!inputText.trim() || !user || !report || report.status === 'selesai') return
+    if (!inputText.trim() || !user || !report || report.status === 'closed') return
 
     setIsSending(true)
     try {
@@ -147,10 +147,10 @@ export default function PelangganReportDetailPage({ params }: { params: { id: st
             <div className="flex items-center gap-2">
               <h2 className="font-bold text-slate-800 dark:text-slate-100 text-sm font-heading line-clamp-1">{report.subject}</h2>
               <Badge 
-                variant={report.status === 'pending' ? 'destructive' : report.status === 'selesai' ? 'outline' : 'default'} 
-                className={`text-[9px] px-1.5 py-0 h-4 ${report.status === 'selesai' ? 'border-emerald-200 text-emerald-600 dark:text-emerald-400' : ''}`}
+                variant={report.status === 'pending' ? 'destructive' : report.status === 'closed' ? 'outline' : 'default'} 
+                className={`text-[9px] px-1.5 py-0 h-4 ${report.status === 'closed' ? 'border-emerald-200 text-emerald-600 dark:text-emerald-400' : ''}`}
               >
-                {report.status === 'pending' ? 'Menunggu' : report.status === 'selesai' ? 'Selesai' : 'Diproses'}
+                {report.status === 'pending' ? 'Menunggu' : report.status === 'closed' ? 'Selesai' : 'Diproses'}
               </Badge>
             </div>
             <div className="flex items-center gap-1 text-[10px] text-slate-500 mt-0.5">
@@ -217,7 +217,7 @@ export default function PelangganReportDetailPage({ params }: { params: { id: st
 
       {/* Input Message Footer */}
       <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
-        {report.status === 'selesai' ? (
+        {report.status === 'closed' ? (
           <div className="text-center p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800 text-sm text-slate-500 font-medium">
             Laporan ini telah ditutup oleh Admin.
           </div>

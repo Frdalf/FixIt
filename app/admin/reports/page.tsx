@@ -133,12 +133,12 @@ export default function AdminReportsPage() {
       if (selectedReport.status === 'pending') {
         const { error: updateErr } = await supabase
           .from('customer_reports')
-          .update({ status: 'diproses' })
+          .update({ status: 'replied' })
           .eq('id', selectedReport.id)
 
         if (!updateErr) {
           fetchReports()
-          setSelectedReport((prev: any) => ({ ...prev, status: 'diproses' }))
+          setSelectedReport((prev: any) => ({ ...prev, status: 'replied' }))
         }
       }
 
@@ -157,13 +157,13 @@ export default function AdminReportsPage() {
       const supabase = createClient()
       const { error } = await supabase
         .from('customer_reports')
-        .update({ status: 'selesai' })
+        .update({ status: 'closed' })
         .eq('id', selectedReport.id)
 
       if (error) throw error
       toast.success('Laporan berhasil ditandai sebagai selesai')
       fetchReports()
-      setSelectedReport((prev: any) => ({ ...prev, status: 'selesai' }))
+      setSelectedReport((prev: any) => ({ ...prev, status: 'closed' }))
     } catch (err: any) {
       toast.error('Gagal menyelesaikan laporan: ' + err.message)
     } finally {
@@ -257,8 +257,8 @@ export default function AdminReportsPage() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-slate-500">{report.orders?.order_code}</span>
-                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 h-4 ${report.status === 'selesai' ? 'border-emerald-200 text-emerald-600 bg-emerald-50' : 'border-blue-200 text-blue-600 bg-blue-50'}`}>
-                        {report.status === 'selesai' ? 'Selesai' : 'Diproses'}
+                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 h-4 ${report.status === 'closed' ? 'border-emerald-200 text-emerald-600 bg-emerald-50' : 'border-blue-200 text-blue-600 bg-blue-50'}`}>
+                        {report.status === 'closed' ? 'Selesai' : 'Diproses'}
                       </Badge>
                     </div>
                     <div className="font-bold text-slate-700 dark:text-slate-300 text-xs mt-1 truncate">{report.subject}</div>
@@ -276,8 +276,8 @@ export default function AdminReportsPage() {
               <CardHeader className="border-b border-slate-100 dark:border-slate-800 shrink-0">
                 <div className="flex items-start justify-between">
                   <div>
-                    <Badge variant={selectedReport.status === 'pending' ? 'destructive' : selectedReport.status === 'selesai' ? 'outline' : 'default'} className="mb-2 text-[10px]">
-                      {selectedReport.status === 'pending' ? 'Butuh Tanggapan' : selectedReport.status === 'selesai' ? 'Selesai' : 'Diproses'}
+                    <Badge variant={selectedReport.status === 'pending' ? 'destructive' : selectedReport.status === 'closed' ? 'outline' : 'default'} className="mb-2 text-[10px]">
+                      {selectedReport.status === 'pending' ? 'Butuh Tanggapan' : selectedReport.status === 'closed' ? 'Selesai' : 'Diproses'}
                     </Badge>
                     <CardTitle className="text-lg font-bold text-slate-800 dark:text-slate-100">
                       {selectedReport.subject}
@@ -286,7 +286,7 @@ export default function AdminReportsPage() {
                       Dilaporkan pada {format(new Date(selectedReport.created_at), 'dd MMM yyyy, HH:mm', { locale: id })}
                     </div>
                   </div>
-                  {selectedReport.status !== 'selesai' && (
+                  {selectedReport.status !== 'closed' && (
                     <Button 
                       onClick={handleSelesai} 
                       disabled={isFinishing}
@@ -378,7 +378,7 @@ export default function AdminReportsPage() {
 
                 {/* Reply Form */}
                 <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
-                  {selectedReport.status === 'selesai' ? (
+                  {selectedReport.status === 'closed' ? (
                     <div className="text-center p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-800 text-sm text-slate-500 font-medium">
                       Laporan ini telah ditutup.
                     </div>

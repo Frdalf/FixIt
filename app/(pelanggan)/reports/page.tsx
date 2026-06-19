@@ -82,10 +82,10 @@ export default function PelangganReportsListPage() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Badge 
-                          variant={report.status === 'pending' ? 'destructive' : report.status === 'selesai' ? 'outline' : 'default'} 
-                          className={`text-[9px] px-1.5 py-0 h-4 ${report.status === 'selesai' ? 'border-emerald-200 text-emerald-600 dark:text-emerald-400' : ''}`}
+                          variant={report.status === 'pending' ? 'destructive' : report.status === 'closed' ? 'outline' : 'default'} 
+                          className={`text-[9px] px-1.5 py-0 h-4 ${report.status === 'closed' ? 'border-emerald-200 text-emerald-600 dark:text-emerald-400' : ''}`}
                         >
-                          {report.status === 'pending' ? 'Menunggu' : report.status === 'selesai' ? 'Selesai' : 'Diproses'}
+                          {report.status === 'pending' ? 'Menunggu' : report.status === 'closed' ? 'Selesai' : 'Diproses'}
                         </Badge>
                         <span className="text-[10px] text-slate-400">
                           {format(new Date(report.created_at), 'dd MMM yyyy', { locale: id })}
