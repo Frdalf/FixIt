@@ -32,7 +32,8 @@ export default function TeknisiChatRoomPage({ params }: { params: { orderId: str
           .from('chats')
           .select('*, orders!inner(*)')
           .eq('order_id', orderId)
-          .single()
+          .limit(1)
+          .maybeSingle()
 
         if (!error && chatData) {
           // Fetch pelanggan profile separately to avoid ambiguous foreign key error
@@ -46,8 +47,7 @@ export default function TeknisiChatRoomPage({ params }: { params: { orderId: str
             chatData.orders.pelanggan = pelangganProfile
           }
           setChat(chatData)
-        } else if (error) {
-          if (error.code === 'PGRST116') {
+        } else if (!error && !chatData) {
             // Auto-create chat if not exists
             const { data: newChat, error: createError } = await supabase
               .from('chats')
@@ -67,16 +67,15 @@ export default function TeknisiChatRoomPage({ params }: { params: { orderId: str
               setChat(newChat)
             } else {
               // If race condition where it was just created, try fetch again, or just show error
-              if (createError?.code === '23505') {
-                 const { data: retryChat } = await supabase.from('chats').select('*, orders!inner(*)').eq('order_id', orderId).single()
+              if (createError?.code === '23505' || createError?.code === 'PGRST116') {
+                 const { data: retryChat } = await supabase.from('chats').select('*, orders!inner(*)').eq('order_id', orderId).limit(1).maybeSingle()
                  if (retryChat) setChat(retryChat)
               } else {
                  setFetchError(createError || new Error('Gagal membuat ruang chat baru'))
               }
             }
-          } else {
-            setFetchError(error)
-          }
+        } else {
+          setFetchError(error)
         }
       } catch (err) {
         console.warn('Error fetching chat session details. Simulating for development.', err)

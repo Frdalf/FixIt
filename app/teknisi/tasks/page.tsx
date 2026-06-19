@@ -169,14 +169,23 @@ export default function TeknisiTasksPage() {
 
       if (error) throw error
 
-      // Jika teknisi menerima orderan, buat ruang chat
+      // Jika teknisi menerima orderan, cek atau buat ruang chat
       if (nextStatus === 'dikonfirmasi') {
-        const { error: chatError } = await supabase
+        const { data: existingChat } = await supabase
           .from('chats')
-          .insert({ order_id: taskId })
-          
-        if (chatError && chatError.code !== '23505') {
-          console.warn('Gagal membuat ruang chat:', chatError)
+          .select('id')
+          .eq('order_id', taskId)
+          .limit(1)
+          .maybeSingle()
+
+        if (!existingChat) {
+          const { error: chatError } = await supabase
+            .from('chats')
+            .insert({ order_id: taskId })
+            
+          if (chatError && chatError.code !== '23505') {
+            console.warn('Gagal membuat ruang chat:', chatError)
+          }
         }
       }
 
