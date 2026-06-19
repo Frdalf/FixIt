@@ -361,6 +361,19 @@ export default function TeknisiTasksPage() {
                     </div>
                   </div>
 
+                  {/* Cancel Reason Snapshot */}
+                  {task.status === 'dibatalkan' && task.cancel_reason && (
+                    <div className="bg-rose-50 dark:bg-rose-950/20 p-3 rounded-xl border border-rose-100 dark:border-rose-900 space-y-1.5 mt-3">
+                      <div className="text-[11px] font-bold text-rose-700 dark:text-rose-500 flex items-center gap-1.5 uppercase tracking-wider">
+                        <AlertCircle className="h-3.5 w-3.5" />
+                        Alasan Pembatalan
+                      </div>
+                      <p className="text-xs text-rose-800/80 dark:text-rose-400/80 leading-relaxed font-medium">
+                        {task.cancel_reason}
+                      </p>
+                    </div>
+                  )}
+
                   {/* Review / Rating Snapshot */}
                   {task.status === 'selesai' && review && (
                     <div className="bg-amber-50 dark:bg-amber-950/20 p-3 rounded-xl border border-amber-100 dark:border-amber-900 space-y-1.5">
