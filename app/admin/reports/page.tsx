@@ -181,7 +181,8 @@ export default function AdminReportsPage() {
   }
 
   const pendingReports = reports.filter(r => r.status === 'pending')
-  const historyReports = reports.filter(r => r.status !== 'pending')
+  const processingReports = reports.filter(r => r.status === 'replied')
+  const historyReports = reports.filter(r => r.status === 'closed')
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
@@ -237,9 +238,45 @@ export default function AdminReportsPage() {
 
           <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm">
             <CardHeader className="bg-slate-50 dark:bg-slate-950/50 border-b border-slate-100 dark:border-slate-800 pb-3">
+              <CardTitle className="text-sm font-bold text-slate-600 dark:text-slate-400 flex items-center justify-between">
+                Sedang Diproses
+                <Badge variant="outline" className="rounded-full px-2 text-blue-600 bg-blue-50 border-blue-200">{processingReports.length}</Badge>
+              </CardTitle>
+            </CardHeader>
+            <div className="max-h-[250px] overflow-y-auto p-2">
+              {processingReports.length === 0 ? (
+                <div className="text-center py-8 text-slate-400 dark:text-slate-500 text-xs font-medium">
+                  Tidak ada laporan diproses
+                </div>
+              ) : (
+                processingReports.map(report => (
+                  <button
+                    key={report.id}
+                    onClick={() => setSelectedReport(report)}
+                    className={`w-full text-left p-3 rounded-xl mb-1 transition-colors border ${
+                      selectedReport?.id === report.id
+                        ? 'bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-900'
+                        : 'bg-white dark:bg-slate-900 border-transparent hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-200 dark:hover:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-slate-500">{report.orders?.order_code}</span>
+                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-blue-200 text-blue-600 bg-blue-50">
+                        Diproses
+                      </Badge>
+                    </div>
+                    <div className="font-bold text-slate-700 dark:text-slate-300 text-xs mt-1 truncate">{report.subject}</div>
+                  </button>
+                ))
+              )}
+            </div>
+          </Card>
+
+          <Card className="border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl overflow-hidden shadow-sm">
+            <CardHeader className="bg-slate-50 dark:bg-slate-950/50 border-b border-slate-100 dark:border-slate-800 pb-3">
               <CardTitle className="text-sm font-bold text-slate-600 dark:text-slate-400">Riwayat Laporan</CardTitle>
             </CardHeader>
-            <div className="max-h-[300px] overflow-y-auto p-2">
+            <div className="max-h-[250px] overflow-y-auto p-2">
               {historyReports.length === 0 ? (
                 <div className="text-center py-8 text-slate-400 dark:text-slate-500 text-xs font-medium">
                   Belum ada riwayat
@@ -257,8 +294,8 @@ export default function AdminReportsPage() {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-[10px] font-bold text-slate-500">{report.orders?.order_code}</span>
-                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 h-4 ${report.status === 'closed' ? 'border-emerald-200 text-emerald-600 bg-emerald-50' : 'border-blue-200 text-blue-600 bg-blue-50'}`}>
-                        {report.status === 'closed' ? 'Selesai' : 'Diproses'}
+                      <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-emerald-200 text-emerald-600 bg-emerald-50">
+                        Selesai
                       </Badge>
                     </div>
                     <div className="font-bold text-slate-700 dark:text-slate-300 text-xs mt-1 truncate">{report.subject}</div>
