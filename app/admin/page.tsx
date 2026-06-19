@@ -63,13 +63,13 @@ export default function AdminDashboardPage() {
           .eq('role', 'teknisi')
           .eq('is_active', true)
 
-        // 3. Fetch total revenue (sum of payments status = paid)
+        // 3. Fetch total revenue (sum of orders that are not pending or cancelled)
         const { data: revenueData } = await supabase
-          .from('payments')
-          .select('amount')
-          .eq('status', 'paid')
+          .from('orders')
+          .select('total')
+          .in('status', ['dikonfirmasi', 'berangkat', 'diproses', 'selesai'])
 
-        const revenue = revenueData?.reduce((sum, p) => sum + p.amount, 0) || 0
+        const revenue = revenueData?.reduce((sum, o) => sum + o.total, 0) || 0
 
         // 4. Fetch pending orders
         const { count: pendingCount } = await supabase
