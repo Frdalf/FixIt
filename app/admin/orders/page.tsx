@@ -44,10 +44,10 @@ export default function AdminOrdersPage() {
     try {
       const supabase = createClient()
       
-      // 1. Fetch all orders and order_items
+      // 1. Fetch all orders and order_items, along with reviews
       const { data: ordersData, error: ordersError } = await supabase
         .from('orders')
-        .select('*, order_items(*)')
+        .select('*, order_items(*), reviews(*)')
         .order('created_at', { ascending: false })
 
       if (ordersError) throw ordersError
@@ -437,6 +437,38 @@ export default function AdminOrdersPage() {
                         <div className="text-xs font-bold text-rose-800 dark:text-rose-400">Informasi Pembatalan</div>
                         <div className="text-[11px] text-rose-600 dark:text-rose-500 mt-0.5">{order.cancel_reason}</div>
                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {order.status === 'selesai' && order.reviews && order.reviews.length > 0 && (
+                  <div className="pt-3 border-t border-slate-150 dark:border-slate-900 mt-3">
+                    <div className="bg-amber-50 dark:bg-amber-950/20 rounded-xl p-3">
+                      <div className="flex items-center gap-1 mb-1.5">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <svg
+                            key={star}
+                            className={cn(
+                              'h-3.5 w-3.5',
+                              star <= order.reviews[0].rating
+                                ? 'text-amber-500 fill-amber-500'
+                                : 'text-slate-300 dark:text-slate-700'
+                            )}
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                          </svg>
+                        ))}
+                        <span className="text-[10px] font-bold text-amber-700 dark:text-amber-500 ml-1">
+                          Nilai: {order.reviews[0].rating}/5
+                        </span>
+                      </div>
+                      {order.reviews[0].comment && (
+                        <p className="text-xs text-amber-900/80 dark:text-amber-100/70 italic mt-1 leading-relaxed">
+                          "{order.reviews[0].comment}"
+                        </p>
+                      )}
                     </div>
                   </div>
                 )}
