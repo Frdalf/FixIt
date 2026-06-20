@@ -293,6 +293,7 @@ export default function AdminOrdersPage() {
         {orders.map((order) => {
           const isPending = order.status === 'menunggu'
           const isAssigning = assigningOrderId === order.id
+          const review = Array.isArray(order.reviews) ? order.reviews[0] : order.reviews
           
           return (
             <Card key={order.id} className="border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-950 text-slate-800 dark:text-white rounded-2xl shadow-md overflow-hidden animate-in fade-in-50 duration-200">
@@ -441,7 +442,7 @@ export default function AdminOrdersPage() {
                   </div>
                 )}
 
-                {order.status === 'selesai' && order.reviews && order.reviews.length > 0 && (
+                {order.status === 'selesai' && review && (
                   <div className="pt-3 border-t border-slate-150 dark:border-slate-900 mt-3">
                     <div className="bg-amber-50 dark:bg-amber-950/20 rounded-xl p-3">
                       <div className="flex items-center gap-1 mb-1.5">
@@ -450,7 +451,7 @@ export default function AdminOrdersPage() {
                             key={star}
                             className={cn(
                               'h-3.5 w-3.5',
-                              star <= order.reviews[0].rating
+                              star <= review.rating
                                 ? 'text-amber-500 fill-amber-500'
                                 : 'text-slate-300 dark:text-slate-700'
                             )}
@@ -461,12 +462,12 @@ export default function AdminOrdersPage() {
                           </svg>
                         ))}
                         <span className="text-[10px] font-bold text-amber-700 dark:text-amber-500 ml-1">
-                          Nilai: {order.reviews[0].rating}/5
+                          Nilai: {review.rating}/5
                         </span>
                       </div>
-                      {order.reviews[0].comment && (
+                      {review.comment && (
                         <p className="text-xs text-amber-900/80 dark:text-amber-100/70 italic mt-1 leading-relaxed">
-                          "{order.reviews[0].comment}"
+                          "{review.comment}"
                         </p>
                       )}
                     </div>
