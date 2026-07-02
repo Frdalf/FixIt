@@ -12,6 +12,54 @@ FixIT adalah platform manajemen perbaikan dan servis elektronik (seperti laptop 
 - **Backend:** Next.js API Routes
 - **Database & Auth:** Supabase
 
+## Live Demo
+Aplikasi FixIT dapat diakses secara live melalui tautan berikut:
+🔗 **[fixitku.vercel.app](https://fixitku.vercel.app)**
+
+## Cara Menjalankan Secara Lokal
+
+Ikuti langkah-langkah berikut untuk menjalankan platform FixIT di komputer Anda:
+
+1. **Clone repository ini**
+   ```bash
+   git clone https://github.com/Frdalf/FixIt.git
+   cd FixIt
+   ```
+
+2. **Install dependencies**
+   Anda bisa menggunakan `npm`, `yarn`, `pnpm`, atau `bun`. Contoh menggunakan `npm`:
+   ```bash
+   npm install
+   ```
+
+3. **Siapkan Environment Variables**
+   Buat file `.env.local` di folder utama proyek (sejajar dengan `package.json`) dan isi dengan kredensial Supabase Anda. Anda juga bisa melihat formatnya di file `.env.example` (jika ada):
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=url_supabase_anda
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=anon_key_supabase_anda
+   SUPABASE_SERVICE_ROLE_KEY=service_role_key_anda
+   ```
+
+4. **Jalankan Development Server**
+   ```bash
+   npm run dev
+   ```
+   Buka [http://localhost:3000](http://localhost:3000) di browser Anda untuk menggunakan aplikasi.
+
+## Cara Deploy (Vercel)
+
+Aplikasi berbasis Next.js ini sangat mudah dan direkomendasikan untuk di-deploy menggunakan **Vercel**.
+
+1. Login ke akun [Vercel](https://vercel.com).
+2. Klik tombol **Add New...** -> **Project**.
+3. Import repository GitHub `FixIt` Anda.
+4. Pada menu konfigurasi deploy, buka bagian **Environment Variables** dan tambahkan 3 *secret key* berikut sesuai dengan project Supabase Anda:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+5. Klik tombol **Deploy** dan tunggu hingga proses *build* selesai.
+6. FixIT Anda kini sudah *live* dan dapat diakses publik!
+
 ## License
 
 MIT License
